@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">lab3_environment</string>
+    <string name="main_btn_nfc">NFC</string>
+    <string name="main_btn_ibeacon">iBeacon</string>
+    <string name="main_btn_barcode">Barcode</string>
+    <string name="main_title">SYM labo 3 - Environment</string>
 </resources>
