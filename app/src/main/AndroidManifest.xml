@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Lab3_environment">
         <activity
+            android:name=".NFC"
+            android:exported="true" />
+        <activity
+            android:name=".iBeacon"
+            android:exported="true" />
+        <activity
+            android:name=".Barcode"
+            android:exported="true" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
