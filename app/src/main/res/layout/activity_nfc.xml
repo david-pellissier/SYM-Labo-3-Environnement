@@ -50,6 +50,7 @@
         android:layout_below="@id/sign_in_password_title"
         android:layout_marginTop="72dp"
         android:hint="@string/main_password_hint"
+        android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
