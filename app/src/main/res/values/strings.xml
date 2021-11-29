@@ -4,4 +4,9 @@
     <string name="main_btn_ibeacon">iBeacon</string>
     <string name="main_btn_barcode">Barcode</string>
     <string name="main_title">SYM labo 3 - Environment</string>
+    <string name="password_hint">Password</string>
+    <string name="username_hint">Username</string>
+    <string name="main_username_hint">Username...</string>
+    <string name="main_password_hint">Password...</string>
+    <string name="button_connect">CONNECT</string>
 </resources>
