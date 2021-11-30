@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<activity android:name="net.vrallev.android.nfc.demo.MainActivity"
-    android:label="@string/app_name"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
-    </intent-filter>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <tech-list>
+        <tech>android.nfc.tech.Ndef</tech>
+        <!-- class name -->
+    </tech-list>
+</resources>
 
-    <intent-filter>
-        <action android:name="android.nfc.action.TECH_DISCOVERED" />
-    </intent-filter>
-
-    <meta-data
-        android:name="android.nfc.action.TECH_DISCOVERED"
-        android:resource="@xml/nfc_tech_filter" />
-</activity>
+    <!--
+    <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+        <tech-list>
+            <tech>android.nfc.tech.IsoDep</tech>
+            <tech>android.nfc.tech.NfcA</tech>
+            <tech>android.nfc.tech.NfcB</tech>
+            <tech>android.nfc.tech.NfcF</tech>
+            <tech>android.nfc.tech.NfcV</tech>
+            <tech>android.nfc.tech.Ndef</tech>
+            <tech>android.nfc.tech.NdefFormatable</tech>
+            <tech>android.nfc.tech.MifareClassic</tech>
+            <tech>android.nfc.tech.MifareUltralight</tech>
+        </tech-list>
+    </resources>
+    -->
