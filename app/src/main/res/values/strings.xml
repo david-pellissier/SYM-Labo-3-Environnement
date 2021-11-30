@@ -9,4 +9,7 @@
     <string name="main_username_hint">Username...</string>
     <string name="main_password_hint">Password...</string>
     <string name="button_connect">CONNECT</string>
+    <string name="max_security">MAX SECURITY</string>
+    <string name="medium_security">MEDIUM SECURITY</string>
+    <string name="min_security">MIN SECURITY</string>
 </resources>
