@@ -16,6 +16,10 @@
         <activity
             android:name=".NFC"
             android:exported="true" />
+        <meta-data
+            android:name="android.nfc.action.TECH_DISCOVERED"
+            android:resource="@xml/nfc_tech_filter" />
+
         <activity
             android:name=".iBeacon"
             android:exported="true" />
