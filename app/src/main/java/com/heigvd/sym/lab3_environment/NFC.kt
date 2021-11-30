@@ -21,7 +21,7 @@ class NFC : AppCompatActivity() {
     val TAG = "NfcDemo"
 
     private val mTextView: TextView? = null
-    private val mNfcAdapter: NfcAdapter? = null
+    private var mNfcAdapter: NfcAdapter? = null
 
 
     fun reduceBarre(){
@@ -49,6 +49,7 @@ class NFC : AppCompatActivity() {
         val duration = Toast.LENGTH_SHORT
         val toast = Toast.makeText(applicationContext, text, duration)
         toast.show()
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
             // Stop here, we definitely need NFC
             Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
@@ -57,7 +58,7 @@ class NFC : AppCompatActivity() {
 
         }
 
-        if (!mNfcAdapter.isEnabled()) {
+        if (!mNfcAdapter!!.isEnabled()) {
             //mTextView.setText("NFC is disabled.");
             Toast.makeText(this, "NFC is disabled.", Toast.LENGTH_LONG).show();
             finish();

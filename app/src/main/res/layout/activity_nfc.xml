@@ -64,7 +64,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.46"
         app:layout_constraintStart_toStartOf="parent"
-        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:max="10"
+        android:progress="0"
+        style="?android:progressBarStyleHorizontal"
         app:layout_constraintTop_toBottomOf="@+id/main_password" />
 
     <Button
