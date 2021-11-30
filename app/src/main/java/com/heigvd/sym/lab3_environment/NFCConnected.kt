@@ -7,6 +7,7 @@ import android.os.Looper
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Toast
+import java.lang.IllegalStateException
 import java.util.*
 
 class NFCConnected : AppCompatActivity() {
@@ -17,6 +18,9 @@ class NFCConnected : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
 
     private var authStatus = AUTHENTICATE_INIT
+    private val handler = Handler(Looper.getMainLooper())
+    private var timer = Timer()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nfc_connected)
@@ -25,8 +29,19 @@ class NFCConnected : AppCompatActivity() {
         btnLow = findViewById(R.id.btn_min_security)
         progressBar = findViewById(R.id.connected_progress_bar)
 
-        progressBar.progress = AUTHENTICATE_INIT;
+        // Decrease authentication level periodically
         progressBar.max = AUTHENTICATE_MAX
+        progressBar.progress = AUTHENTICATE_MAX
+        timer.schedule(object: TimerTask() {
+            override fun run() {
+                if(authStatus > 0){
+                    handler.post {
+                        authStatus -= AUTHENTICATE_DECREASE
+                        progressBar.setProgress(authStatus, true)
+                    }
+                }
+            }
+        }, DELAY_MS, DELAY_MS)
 
         btnMax.setOnClickListener {
             checkAuthLevel(AUTHENTICATE_MAX)
@@ -37,24 +52,10 @@ class NFCConnected : AppCompatActivity() {
             return@setOnClickListener
         }
         btnLow.setOnClickListener {
-            checkAuthLevel(AUTHENTICATE_LOW)
-            refreshAuthStatus()
+            refreshAuthStatus() // just for debug
+            //checkAuthLevel(AUTHENTICATE_LOW)
             return@setOnClickListener
         }
-
-        val handler = Handler(Looper.getMainLooper())
-
-        // Decrease authentication level periodically
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
-                if(authStatus > 0){
-                    handler.post {
-                        authStatus -= AUTHENTICATE_DECREASE
-                        progressBar.setProgress(authStatus, true)
-                    }
-                }
-            }
-        }, DELAY_MS, DELAY_MS)
     }
 
     private fun checkAuthLevel(level: Int) {
@@ -64,19 +65,19 @@ class NFCConnected : AppCompatActivity() {
 
     private fun refreshAuthStatus() {
         authStatus = AUTHENTICATE_INIT
-        progressBar.progress = authStatus
+        progressBar.setProgress(AUTHENTICATE_MAX, true)
     }
 
     companion object {
-        private const val AUTHENTICATE_INIT = 15
-        private const val AUTHENTICATE_MAX = 10
-        private const val AUTHENTICATE_MEDIUM = 5
-        private const val AUTHENTICATE_LOW = 1
+        private const val AUTHENTICATE_INIT = 120
+        private const val AUTHENTICATE_MAX = 100
+        private const val AUTHENTICATE_MEDIUM = 50
+        private const val AUTHENTICATE_LOW = 10
         private const val AUTH_SUFFICIENT = "Sufficient authentication"
         private const val AUTH_INSUFFICIENT = "Insufficient authentication"
 
         private const val AUTHENTICATE_DECREASE = 1
-        private const val DELAY_MS : Long = 1000
+        private const val DELAY_MS : Long = 100
         private const val TAG = "NFC/Connected"
     }
 }
