@@ -3,13 +3,9 @@ package com.heigvd.sym.lab3_environment
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.Toast
 import java.util.*
 import android.nfc.NfcAdapter
 
-import android.widget.TextView
 import android.content.IntentFilter.MalformedMimeTypeException
 
 import android.content.IntentFilter
@@ -17,20 +13,21 @@ import android.content.IntentFilter
 import android.app.PendingIntent
 
 import android.app.Activity
+import android.graphics.BitmapFactory
 import android.nfc.NdefRecord
 import android.nfc.Tag
 import java.lang.RuntimeException
-import com.heigvd.sym.lab3_environment.Utils.NdefReaderTask
 
 import android.nfc.tech.Ndef
-import android.os.AsyncTask
 import android.util.Log
 import java.io.UnsupportedEncodingException
 import kotlin.experimental.and
-import android.nfc.NdefMessage
-
-
-
+import android.os.Handler
+import android.widget.*
+import kotlinx.coroutines.*
+import java.io.IOException
+import java.net.URL
+import kotlin.coroutines.CoroutineContext
 
 
 class NFC : AppCompatActivity() {
@@ -46,19 +43,56 @@ class NFC : AppCompatActivity() {
     fun reduceBarre() {
 
     }
-    /**
-     * Background task for reading the data. Do not block the UI thread while reading.
-     *
-     * @author Ralf Wondratschek
-     */
-    inner class NdefReaderTask : AsyncTask<Tag?, Void?, String?>() {
-        override fun doInBackground(vararg p0: Tag?): String? {
 
+    class DownloadPicture(private var image: ImageView, private var url : String,
+                          private var handler : Handler
+    ) {
+
+        fun downloadPicture(){
+            val thread:Thread = object:Thread(){
+                override fun run(){
+                    try{
+                        //Define url
+                        val url = URL("https://thispersondoesnotexist.com/image")
+                        //Decode an input stream into a bitmap
+                        val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+
+                        //Update the GUI in thread specified by handler
+                        handler.post{image.setImageBitmap(bmp)}
+                    }catch(e : IOException){
+                        Log.e("Image : ", "Error during download")
+                    }
+                }
+
+            }
+            thread.start();
+        }
+    }
+
+    inner  class Presenter : CoroutineScope {
+        private var job: Job = Job()
+        override val coroutineContext: CoroutineContext
+            get() = Dispatchers.Main + job // to run code in Main(UI) Thread
+
+        // call this method to cancel a coroutine when you don't need it anymore,
+        // e.g. when user closes the screen
+        fun cancel() {
+            job.cancel()
+        }
+
+        fun execute(tag: Tag?) = launch {
+            onPreExecute()
+            val result = doInBackground(tag) // runs in background thread without blocking the Main Thread
+            onPostExecute(result)
+        }
+
+        private suspend fun doInBackground(vararg p0: Tag?): String = withContext(Dispatchers.IO) { // to run code in Background Thread
+            // do async work
             val tag: Tag? = p0[0]
             Log.e(tag.toString(), "doInBackground")
             val ndef = Ndef.get(tag)
                 ?: // NDEF is not supported by this Tag.
-                return null
+                return@withContext null.toString()
 
             val ndefMessage = ndef.cachedNdefMessage
             val records = ndefMessage.records
@@ -69,13 +103,29 @@ class NFC : AppCompatActivity() {
                     )
                 ) {
                     try {
-                        return readText(ndefRecord)
+                        return@withContext readText(ndefRecord)
                     } catch (e: UnsupportedEncodingException) {
                         Log.e(tag.toString(), "Unsupported Encoding", e)
                     }
                 }
             }
-            return null
+            return@withContext "SomeResult"
+        }
+
+        // Runs on the Main(UI) Thread
+        private fun onPreExecute() {
+            // show progress
+        }
+
+        // Runs on the Main(UI) Thread
+        private fun onPostExecute(result: String) {
+            // hide progress
+            if (result != null) {
+                Log.e("setText : ", "read")
+                mTextView?.text = "Read content: $result"
+            }else{
+                Log.e("setText : ", "null")
+            }
         }
 
         @Throws(UnsupportedEncodingException::class)
@@ -114,22 +164,9 @@ class NFC : AppCompatActivity() {
                 textEncoding
             )
         }
-
-
-
-
-        /*
-        Runs on the UI thread after doInBackground(Params...). The specified result is the value returned by doInBackground(Params...).
-         */
-        override fun onPostExecute(result: String?) {
-            if (result != null) {
-                Log.e("setText : ", "read")
-                mTextView?.text = "Read content: $result"
-            }else{
-                Log.e("setText : ", "null")
-            }
-        }
     }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -193,7 +230,8 @@ class NFC : AppCompatActivity() {
             if (MIME_TEXT_PLAIN == type) {
                 val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
                 Log.e(TAG, "handleIntent")
-                NdefReaderTask().execute(tag)
+                Presenter().execute(tag)
+                //NdefReaderTask().execute(tag)
             } else {
                 Log.e(TAG, "Wrong mime type: $type")
             }
@@ -208,7 +246,7 @@ class NFC : AppCompatActivity() {
             val searchedTech = Ndef::class.java.name
             for (tech in techList) {
                 if (searchedTech == tech) {
-                    NdefReaderTask().execute(tag)
+                    Presenter().execute(tag)
                     break
                 }
             }
