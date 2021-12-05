@@ -27,25 +27,114 @@ import android.os.AsyncTask
 import android.util.Log
 import java.io.UnsupportedEncodingException
 import kotlin.experimental.and
+import android.nfc.NdefMessage
+
+
+
 
 
 class NFC : AppCompatActivity() {
     private var AUTHENTICATE_MAX = 10
     private lateinit var progressBar: ProgressBar
     val MIME_TEXT_PLAIN = "text/plain"
-    val TAG = "NfcDemo"
+    val TAG = "Log - NfcDemo : "
 
-    public var mTextView: TextView? = null
+    protected var mTextView: TextView? = null
     private var mNfcAdapter: NfcAdapter? = null
 
 
-    fun reduceBarre(){
+    fun reduceBarre() {
 
     }
+    /**
+     * Background task for reading the data. Do not block the UI thread while reading.
+     *
+     * @author Ralf Wondratschek
+     */
+    inner class NdefReaderTask : AsyncTask<Tag?, Void?, String?>() {
+        override fun doInBackground(vararg p0: Tag?): String? {
+
+            val tag: Tag? = p0[0]
+            Log.e(tag.toString(), "doInBackground")
+            val ndef = Ndef.get(tag)
+                ?: // NDEF is not supported by this Tag.
+                return null
+
+            val ndefMessage = ndef.cachedNdefMessage
+            val records = ndefMessage.records
+            for (ndefRecord in records) {
+                if (ndefRecord.tnf == NdefRecord.TNF_WELL_KNOWN && Arrays.equals(
+                        ndefRecord.type,
+                        NdefRecord.RTD_TEXT
+                    )
+                ) {
+                    try {
+                        return readText(ndefRecord)
+                    } catch (e: UnsupportedEncodingException) {
+                        Log.e(tag.toString(), "Unsupported Encoding", e)
+                    }
+                }
+            }
+            return null
+        }
+
+        @Throws(UnsupportedEncodingException::class)
+        public fun readText(record: NdefRecord): String {
+            /*
+             * See NFC forum specification for "Text Record Type Definition" at 3.2.1
+             *
+             * http://www.nfc-forum.org/specs/
+             *
+             * bit_7 defines encoding
+             * bit_6 reserved for future use, must be 0
+             * bit_5..0 length of IANA language code
+             */
+            Log.e("readText : ", "read")
+
+            val payload = record.payload
+
+            // Get the Text Encoding
+            var textEncoding = charset("UTF-8")
+            if(payload[0] and 128.toByte() == 0.toByte()) {
+                textEncoding = charset("UTF-8")
+            }else{
+                textEncoding = charset("UTF-16")
+            }
+            // Get the Language Code
+            val languageCodeLength: Int = (payload[0] and 52.toByte()).toInt()
+
+            // String languageCode = new String(payload, 1, languageCodeLength, "US-ASCII");
+            // e.g. "en"
+
+            // Get the Text
+            return String(
+                payload,
+                languageCodeLength + 1,
+                payload.size - languageCodeLength - 1,
+                textEncoding
+            )
+        }
+
+
+
+
+        /*
+        Runs on the UI thread after doInBackground(Params...). The specified result is the value returned by doInBackground(Params...).
+         */
+        override fun onPostExecute(result: String?) {
+            if (result != null) {
+                Log.e("setText : ", "read")
+                mTextView?.text = "Read content: $result"
+            }else{
+                Log.e("setText : ", "null")
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nfc)
-
+        Log.d(TAG, "onCreate")
         mTextView = findViewById(R.id.textView_explanation);
 
         progressBar = findViewById(R.id.progressBar)
@@ -87,23 +176,33 @@ class NFC : AppCompatActivity() {
             Toast.makeText(this, "NFC is enabled", Toast.LENGTH_LONG).show();
             //mTextView.setText(R.string.explanation);
         }
-
+        Log.d("Handle : ", "beginning")
         handleIntent(intent);
     }
 
-    private fun  handleIntent(intent : Intent )  {
+    private fun handleIntent(intent: Intent) {
         val action = intent.action
+        Log.e("handleIntent : ", "begin2")
+
+        /*
+        Intent to start an activity when a tag with NDEF payload is discovered.
+         */
         if (NfcAdapter.ACTION_NDEF_DISCOVERED == action) {
+            Log.e(TAG, "begin3")
             val type = intent.type
             if (MIME_TEXT_PLAIN == type) {
                 val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
+                Log.e(TAG, "handleIntent")
                 NdefReaderTask().execute(tag)
             } else {
-                Log.d(TAG, "Wrong mime type: $type")
+                Log.e(TAG, "Wrong mime type: $type")
             }
+            //Intent to start an activity when a tag is discovered.
         } else if (NfcAdapter.ACTION_TECH_DISCOVERED == action) {
 
             // In case we would still use the Tech Discovered Intent
+            Log.e(TAG, "action-tech-discovers")
+            Toast.makeText(this, "Taction-tech-discovers", Toast.LENGTH_LONG).show();
             val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
             val techList: Array<String> = tag?.getTechList() as Array<String>
             val searchedTech = Ndef::class.java.name
@@ -113,6 +212,8 @@ class NFC : AppCompatActivity() {
                     break
                 }
             }
+        }else{
+            Log.e(TAG, "Noting")
         }
     }
 
@@ -125,8 +226,22 @@ class NFC : AppCompatActivity() {
         super.onPause()
     }
 
+    /*
+    Nécessaire pour pouvoir lire plusieurs fois le tag
+     */
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        /**
+         * This method gets called, when a new Intent gets associated with the current activity instance.
+         * Instead of creating a new activity, onNewIntent will be called. For more information have a look
+         * at the documentation.
+         *
+         * In our case this method gets called, when the user attaches a Tag to the device.
+         */
+        handleIntent(intent!!)
+    }
 
-    override fun onResume(){
+    override fun onResume() {
         super.onResume();
 
         /**
@@ -140,7 +255,8 @@ class NFC : AppCompatActivity() {
      * @param activity The corresponding [Activity] requesting the foreground dispatch.
      * @param adapter The [NfcAdapter] used for the foreground dispatch.
      */
-    fun setupForegroundDispatch(activity: Activity, adapter: NfcAdapter) {
+    private fun setupForegroundDispatch(activity: Activity, adapter: NfcAdapter) {
+        Log.d(TAG, "setupForegroundDispatch")
         val intent = Intent(activity.applicationContext, activity.javaClass)
         intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         val pendingIntent = PendingIntent.getActivity(activity.applicationContext, 0, intent, 0)
@@ -163,77 +279,14 @@ class NFC : AppCompatActivity() {
      * @param activity The corresponding [BaseActivity] requesting to stop the foreground dispatch.
      * @param adapter The [NfcAdapter] used for the foreground dispatch.
      */
-    fun stopForegroundDispatch(activity: Activity?, adapter: NfcAdapter) {
+    private fun stopForegroundDispatch(activity: Activity?, adapter: NfcAdapter) {
         adapter.disableForegroundDispatch(activity)
     }
-    /**
-     * Background task for reading the data. Do not block the UI thread while reading.
-     *
-     * @author Ralf Wondratschek
-     */
-    class NdefReaderTask : AsyncTask<Tag?, Void?, String?>() {
-        override fun doInBackground(vararg p0: Tag?): String? {
-            val tag: Tag? = p0[0]
-            val ndef = Ndef.get(tag)
-                ?: // NDEF is not supported by this Tag.
-                return null
-            val ndefMessage = ndef.cachedNdefMessage
-            val records = ndefMessage.records
-            for (ndefRecord in records) {
-                if (ndefRecord.tnf == NdefRecord.TNF_WELL_KNOWN && Arrays.equals(
-                        ndefRecord.type,
-                        NdefRecord.RTD_TEXT
-                    )
-                ) {
-                    try {
-                        return readText(ndefRecord)
-                    } catch (e: UnsupportedEncodingException) {
-                        Log.e(tag.toString(), "Unsupported Encoding", e)
-                    }
-                }
-            }
-            return null
-        }
 
-        @Throws(UnsupportedEncodingException::class)
-        private fun readText(record: NdefRecord): String {
-            /*
-             * See NFC forum specification for "Text Record Type Definition" at 3.2.1
-             *
-             * http://www.nfc-forum.org/specs/
-             *
-             * bit_7 defines encoding
-             * bit_6 reserved for future use, must be 0
-             * bit_5..0 length of IANA language code
-             */
-            val payload = record.payload
 
-            // Get the Text Encoding
-            var textEncoding = charset("UTF-8")
-            if(payload[0] and 128.toByte() == 0.toByte()) {
-                textEncoding = charset("UTF-8")
-            }else{
-                textEncoding = charset("UTF-16")
-            }
-            // Get the Language Code
-            val languageCodeLength: Int = (payload[0] and 52.toByte()).toInt()
 
-            // String languageCode = new String(payload, 1, languageCodeLength, "US-ASCII");
-            // e.g. "en"
 
-            // Get the Text
-            return String(
-                payload,
-                languageCodeLength + 1,
-                payload.size - languageCodeLength - 1,
-                textEncoding
-            )
-        }
-    }
-
-    fun onPostExecute(result: String?) {
-        if (result != null) {
-            mTextView?.setText("Read content: $result")
-        }
-    }
 }
+
+
+
