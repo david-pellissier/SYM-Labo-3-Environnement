@@ -1,18 +1,11 @@
 package com.heigvd.sym.lab3_environment
 
-import android.content.Intent
-import android.nfc.NfcAdapter
-import android.nfc.Tag
-import android.nfc.tech.Ndef
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Toast
-import com.heigvd.sym.lab3_environment.utils.ForegroundNFC
 import com.heigvd.sym.lab3_environment.utils.ManageNFC
 import com.heigvd.sym.lab3_environment.utils.NFCActivity
 import java.util.*

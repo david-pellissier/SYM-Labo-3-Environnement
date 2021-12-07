@@ -2,14 +2,8 @@ package com.heigvd.sym.lab3_environment
 
 import android.content.Intent
 import android.os.Bundle
-import android.nfc.NfcAdapter
-
-import android.nfc.Tag
-
-import android.nfc.tech.Ndef
 import android.util.Log
 import android.widget.*
-import com.heigvd.sym.lab3_environment.utils.ForegroundNFC
 import com.heigvd.sym.lab3_environment.utils.ManageNFC
 import androidx.appcompat.app.AlertDialog
 import com.heigvd.sym.lab3_environment.utils.NFCActivity
@@ -18,8 +12,7 @@ import kotlinx.coroutines.*
 
 class NFC : NFCActivity() {
 
-    protected var mTextView: TextView? = null
-    private var mNfcAdapter: NfcAdapter? = null
+    private var mTextView: TextView? = null
 
     private lateinit var user: EditText
     private lateinit var password: EditText
