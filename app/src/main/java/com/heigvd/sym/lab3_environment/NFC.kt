@@ -11,13 +11,12 @@ import android.nfc.tech.Ndef
 import android.util.Log
 import android.widget.*
 import com.heigvd.sym.lab3_environment.Utils.ForegroundNFC
-import com.heigvd.sym.lab3_environment.Utils.manageNFC
+import com.heigvd.sym.lab3_environment.Utils.ManageNFC
 import androidx.appcompat.app.AlertDialog
 import kotlinx.coroutines.*
 
 
 class NFC : AppCompatActivity() {
-    private lateinit var progressBar: ProgressBar
     val MIME_TEXT_PLAIN = "text/plain"
     val TAG = "Log - NfcDemo : "
 
@@ -31,7 +30,8 @@ class NFC : AppCompatActivity() {
     private var passwordCheck = false;
     private var NFCContent = "frtest";
     private val activity = this;
-    inner class manageNFCImpl : manageNFC() {
+
+    inner class ManageNFCImpl : ManageNFC() {
         @Override
         override fun onPostExecute(result: String){
             if (result != null) {

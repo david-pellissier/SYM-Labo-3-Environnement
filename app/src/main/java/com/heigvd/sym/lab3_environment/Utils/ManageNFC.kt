@@ -11,7 +11,7 @@ import java.util.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.experimental.and
 
-open class manageNFC : CoroutineScope {
+open class ManageNFC : CoroutineScope {
     private var job: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job // to run code in Main(UI) Thread
