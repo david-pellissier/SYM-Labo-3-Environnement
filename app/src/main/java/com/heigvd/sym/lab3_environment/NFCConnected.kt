@@ -13,7 +13,7 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.heigvd.sym.lab3_environment.Utils.ForegroundNFC
-import com.heigvd.sym.lab3_environment.Utils.manageNFC
+import com.heigvd.sym.lab3_environment.Utils.ManageNFC
 import java.util.*
 
 class NFCConnected : AppCompatActivity() {
@@ -92,7 +92,7 @@ class NFCConnected : AppCompatActivity() {
         Toast.makeText(this, "Authentication refreshed !", Toast.LENGTH_SHORT).show()
     }
 
-    inner class ManageNFCImpl : manageNFC() {
+    inner class ManageNFCImpl : ManageNFC() {
         @Override
         override fun onPostExecute(result: String){
             refreshAuthStatus()
@@ -127,7 +127,7 @@ class NFCConnected : AppCompatActivity() {
             val searchedTech = Ndef::class.java.name
             for (tech in techList) {
                 if (searchedTech == tech) {
-                    manageNFC().execute(tag)
+                    ManageNFC().execute(tag)
                     break
                 }
             }

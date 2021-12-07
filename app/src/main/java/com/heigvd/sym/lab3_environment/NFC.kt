@@ -4,18 +4,19 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.nfc.NfcAdapter
+
 import android.nfc.Tag
+
 import android.nfc.tech.Ndef
 import android.util.Log
 import android.widget.*
 import com.heigvd.sym.lab3_environment.Utils.ForegroundNFC
-import com.heigvd.sym.lab3_environment.Utils.manageNFC
+import com.heigvd.sym.lab3_environment.Utils.ManageNFC
 import androidx.appcompat.app.AlertDialog
 import kotlinx.coroutines.*
 
 
 class NFC : AppCompatActivity() {
-    private lateinit var progressBar: ProgressBar
     val MIME_TEXT_PLAIN = "text/plain"
     val TAG = "Log - NfcDemo : "
 
@@ -26,11 +27,28 @@ class NFC : AppCompatActivity() {
     private lateinit var password: EditText
     private lateinit var validateButton: Button
 
-    inner class ManageNFCImpl : manageNFC() {
+    private var passwordCheck = false;
+    private var NFCContent = "frtest";
+    private val activity = this;
+
+    inner class ManageNFCImpl : ManageNFC() {
         @Override
         override fun onPostExecute(result: String){
-            Log.e("setText : ", "read")
-            mTextView?.text = "Read content: $result"
+            if (result != null) {
+                Log.e("setText : ", "read")
+                Log.e("setText pc : ", passwordCheck.toString())
+                Log.e("setText : ", result)
+                if(passwordCheck && result.equals(NFCContent) ){
+                    Log.e("setText : ", "startActivity")
+                    val intent = Intent(activity.applicationContext, NFCConnected::class.java)
+                    startActivity(intent)
+                }else{
+                    //mTextView?.text = "Read content: $result"
+                }
+
+            }else{
+                Log.e("setText : ", "null")
+            }
         }
     }
 
@@ -76,6 +94,7 @@ class NFC : AppCompatActivity() {
                 }
                 if (NFC.credentials.find { it == Pair(userInput, passwordInput) } != null) {
                     // Lance handle
+                    passwordCheck = true;
                     handleIntent(intent);
                 } else {
                     val alertDialog = AlertDialog.Builder(this)
