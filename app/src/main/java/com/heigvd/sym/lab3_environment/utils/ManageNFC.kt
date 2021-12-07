@@ -1,6 +1,5 @@
-package com.heigvd.sym.lab3_environment.Utils
+package com.heigvd.sym.lab3_environment.utils
 
-import android.app.Activity
 import android.nfc.NdefRecord
 import android.nfc.Tag
 import android.nfc.tech.Ndef
@@ -62,12 +61,11 @@ open class ManageNFC : CoroutineScope {
     // Runs on the Main(UI) Thread
     open fun onPostExecute(result: String) {
         // hide progress
-        if (result != null) {
-            Log.e("setText : ", "read")
-            //mTextView?.text = "Read content: $result"
-        }else{
-            Log.e("setText : ", "null")
-        }
+        Log.e("setText : ", "read")
+        if(checkNFC(result))
+            return
+
+        // ... completed in implementations
     }
 
     @Throws(UnsupportedEncodingException::class)
@@ -106,4 +104,16 @@ open class ManageNFC : CoroutineScope {
             textEncoding
         )
     }
+
+    private fun checkNFC(text: String) : Boolean {
+
+        if(text == NFCActivity.NFCContent){
+            return true
+        }else{
+            Log.e(NFCActivity.TAG, "Wrong NFC value: $text")
+            return false
+        }
+
+    }
+
 }

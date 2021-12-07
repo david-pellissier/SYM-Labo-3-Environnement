@@ -28,7 +28,7 @@
             android:name=".NFCConnected"
             android:exported="true" />
         <activity
-            android:name=".NFC"
+            android:name=".NFCLogin"
             android:exported="true" />
         <meta-data
             android:name="android.nfc.action.TECH_DISCOVERED"
