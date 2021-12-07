@@ -13,18 +13,14 @@ import android.content.IntentFilter
 import android.app.PendingIntent
 
 import android.app.Activity
-import android.nfc.NdefRecord
 import android.nfc.Tag
 import java.lang.RuntimeException
 
 import android.nfc.tech.Ndef
 import android.util.Log
-import java.io.UnsupportedEncodingException
-import kotlin.experimental.and
 import android.widget.*
 import com.heigvd.sym.lab3_environment.Utils.manageNFC
 import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
 
 
 class NFC : AppCompatActivity() {
@@ -36,6 +32,17 @@ class NFC : AppCompatActivity() {
     private var mNfcAdapter: NfcAdapter? = null
 
 
+    inner class manageNFCImpl : manageNFC() {
+        @Override
+        override fun onPostExecute(result: String){
+            if (result != null) {
+                Log.e("setText : ", "read")
+                mTextView?.text = "Read content: $result"
+            }else{
+                Log.e("setText : ", "null")
+            }
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,7 +106,7 @@ class NFC : AppCompatActivity() {
             if (MIME_TEXT_PLAIN == type) {
                 val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
                 Log.e(TAG, "handleIntent")
-                manageNFC().execute(tag)
+                manageNFCImpl().execute(tag)
                 //NdefReaderTask().execute(tag)
             } else {
                 Log.e(TAG, "Wrong mime type: $type")
@@ -115,7 +122,7 @@ class NFC : AppCompatActivity() {
             val searchedTech = Ndef::class.java.name
             for (tech in techList) {
                 if (searchedTech == tech) {
-                    manageNFC().execute(tag)
+                    manageNFCImpl().execute(tag)
                     break
                 }
             }

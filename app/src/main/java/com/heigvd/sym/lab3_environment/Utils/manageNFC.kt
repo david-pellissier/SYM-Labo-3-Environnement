@@ -10,7 +10,7 @@ import java.util.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.experimental.and
 
-class manageNFC : CoroutineScope {
+open class manageNFC : CoroutineScope {
     private var job: Job = Job()
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job // to run code in Main(UI) Thread
@@ -59,7 +59,7 @@ class manageNFC : CoroutineScope {
     }
 
     // Runs on the Main(UI) Thread
-    private fun onPostExecute(result: String) {
+    open fun onPostExecute(result: String) {
         // hide progress
         if (result != null) {
             Log.e("setText : ", "read")
