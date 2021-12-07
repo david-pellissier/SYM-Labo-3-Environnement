@@ -16,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Lab3_environment">
         <activity
+            android:name=".Password"
+            android:exported="true" />
+        <activity
             android:name=".NFCConnected"
             android:exported="true" />
         <activity
