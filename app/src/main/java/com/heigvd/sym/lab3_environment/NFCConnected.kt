@@ -179,7 +179,7 @@ class NFCConnected : AppCompatActivity() {
         private const val AUTH_INSUFFICIENT = "Insufficient authentication"
 
         private const val AUTHENTICATE_DECREASE = 1
-        private const val DELAY_MS : Long = 100
+        private const val DELAY_MS : Long = 150
         private const val TAG = "NFC/Connected"
 
         private const val MIME_TEXT_PLAIN = "text/plain"
