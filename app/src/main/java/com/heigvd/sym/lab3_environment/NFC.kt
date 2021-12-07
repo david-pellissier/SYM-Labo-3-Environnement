@@ -3,19 +3,8 @@ package com.heigvd.sym.lab3_environment
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import java.util.*
 import android.nfc.NfcAdapter
-
-import android.content.IntentFilter.MalformedMimeTypeException
-
-import android.content.IntentFilter
-
-import android.app.PendingIntent
-
-import android.app.Activity
 import android.nfc.Tag
-import java.lang.RuntimeException
-
 import android.nfc.tech.Ndef
 import android.util.Log
 import android.widget.*
@@ -37,19 +26,13 @@ class NFC : AppCompatActivity() {
     private lateinit var password: EditText
     private lateinit var validateButton: Button
 
-    inner class manageNFCImpl : manageNFC() {
+    inner class ManageNFCImpl : manageNFC() {
         @Override
         override fun onPostExecute(result: String){
-            if (result != null) {
-                Log.e("setText : ", "read")
-                mTextView?.text = "Read content: $result"
-            }else{
-                Log.e("setText : ", "null")
-            }
+            Log.e("setText : ", "read")
+            mTextView?.text = "Read content: $result"
         }
     }
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +65,6 @@ class NFC : AppCompatActivity() {
 
 
         //NFC code
-
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
             // Stop here, we definitely need NFC
@@ -143,7 +125,7 @@ class NFC : AppCompatActivity() {
             if (MIME_TEXT_PLAIN == type) {
                 val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
                 Log.e(TAG, "handleIntent")
-                manageNFCImpl().execute(tag)
+                this.ManageNFCImpl().execute(tag)
                 //NdefReaderTask().execute(tag)
             } else {
                 Log.e(TAG, "Wrong mime type: $type")
@@ -159,7 +141,7 @@ class NFC : AppCompatActivity() {
             val searchedTech = Ndef::class.java.name
             for (tech in techList) {
                 if (searchedTech == tech) {
-                    manageNFCImpl().execute(tag)
+                    this.ManageNFCImpl().execute(tag)
                     break
                 }
             }
