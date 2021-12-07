@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">lab3_environment</string>
     <string name="main_btn_nfc">NFC</string>
+    <string name="main_btn_tmp">Tmp</string>
     <string name="main_btn_ibeacon">iBeacon</string>
     <string name="main_btn_barcode">Barcode</string>
     <string name="main_title">SYM labo 3 - Environment</string>
@@ -12,4 +13,8 @@
     <string name="max_security">MAX SECURITY</string>
     <string name="medium_security">MEDIUM SECURITY</string>
     <string name="min_security">MIN SECURITY</string>
+    <string name="pw_pw_hint">Password</string>
+    <string name="pw_user_hint">User</string>
+    <string name="pw_cancel_btn">Cancel</string>
+    <string name="pw_validate_btn">Validate</string>
 </resources>

@@ -11,6 +11,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var btnBarcode: Button
     private lateinit var btnNFC: Button
+    private lateinit var btnTmp: Button
     private lateinit var btniBeacon: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,6 +21,7 @@ class MainActivity : AppCompatActivity() {
         btnBarcode = findViewById(R.id.main_btn_barcode)
         btniBeacon = findViewById(R.id.main_btn_ibeacon)
         btnNFC = findViewById(R.id.main_btn_nfc)
+        btnTmp = findViewById(R.id.main_btn_tmp)
 
         btnBarcode.setOnClickListener {
             val intent = Intent(this, Barcode::class.java)
@@ -37,6 +39,13 @@ class MainActivity : AppCompatActivity() {
 
         btnNFC.setOnClickListener {
             val intent = Intent(this, NFC::class.java)
+            startActivity(intent)
+
+            return@setOnClickListener
+        }
+
+        btnTmp.setOnClickListener {
+            val intent = Intent(this, Password::class.java)
             startActivity(intent)
 
             return@setOnClickListener
