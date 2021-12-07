@@ -10,7 +10,7 @@ import com.heigvd.sym.lab3_environment.utils.ManageNFC
 import com.heigvd.sym.lab3_environment.utils.NFCActivity
 import java.util.*
 
-class NFCConnected : NFCActivity() {
+class NFCConnected : NFCActivity(continuousScan = true) {
 
     private lateinit var btnMax: Button
     private lateinit var btnMedium: Button

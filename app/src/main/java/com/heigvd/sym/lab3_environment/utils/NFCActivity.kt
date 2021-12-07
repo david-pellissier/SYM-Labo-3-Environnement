@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.heigvd.sym.lab3_environment.R
 import java.lang.RuntimeException
 
-open class NFCActivity : AppCompatActivity(){
+open class NFCActivity(val continuousScan : Boolean = false) : AppCompatActivity(){
 
     private var mNfcAdapter: NfcAdapter? = null
     protected var nfcPostExecute : ManageNFC? = null
@@ -94,7 +94,8 @@ open class NFCActivity : AppCompatActivity(){
          *
          * In our case this method gets called, when the user attaches a Tag to the device.
          */
-        handleIntent(intent!!)
+        if(continuousScan)
+            handleIntent(intent!!)
     }
 
     override fun onResume() {
