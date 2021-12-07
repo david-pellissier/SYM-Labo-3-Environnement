@@ -12,8 +12,8 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Toast
-import com.heigvd.sym.lab3_environment.Utils.ForegroundNFC
-import com.heigvd.sym.lab3_environment.Utils.ManageNFC
+import com.heigvd.sym.lab3_environment.utils.ForegroundNFC
+import com.heigvd.sym.lab3_environment.utils.ManageNFC
 import java.util.*
 
 class NFCConnected : AppCompatActivity() {

@@ -1,7 +1,6 @@
 package com.heigvd.sym.lab3_environment
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.nfc.NfcAdapter
 
@@ -10,13 +9,14 @@ import android.nfc.Tag
 import android.nfc.tech.Ndef
 import android.util.Log
 import android.widget.*
-import com.heigvd.sym.lab3_environment.Utils.ForegroundNFC
-import com.heigvd.sym.lab3_environment.Utils.ManageNFC
+import com.heigvd.sym.lab3_environment.utils.ForegroundNFC
+import com.heigvd.sym.lab3_environment.utils.ManageNFC
 import androidx.appcompat.app.AlertDialog
+import com.heigvd.sym.lab3_environment.utils.NFCActivity
 import kotlinx.coroutines.*
 
 
-class NFC : AppCompatActivity() {
+class NFC : NFCActivity() {
     val MIME_TEXT_PLAIN = "text/plain"
     val TAG = "Log - NfcDemo : "
 

@@ -1,6 +1,5 @@
-package com.heigvd.sym.lab3_environment.Utils
+package com.heigvd.sym.lab3_environment.utils
 
-import android.app.Activity
 import android.nfc.NdefRecord
 import android.nfc.Tag
 import android.nfc.tech.Ndef
