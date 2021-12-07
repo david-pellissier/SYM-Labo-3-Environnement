@@ -6,15 +6,7 @@ import android.os.Bundle
 import java.util.*
 import android.nfc.NfcAdapter
 
-import android.content.IntentFilter.MalformedMimeTypeException
-
-import android.content.IntentFilter
-
-import android.app.PendingIntent
-
-import android.app.Activity
 import android.nfc.Tag
-import java.lang.RuntimeException
 
 import android.nfc.tech.Ndef
 import android.util.Log
@@ -37,12 +29,24 @@ class NFC : AppCompatActivity() {
     private lateinit var password: EditText
     private lateinit var validateButton: Button
 
+    private var passwordCheck = false;
+    private var NFCContent = "frtest";
+    private val activity = this;
     inner class manageNFCImpl : manageNFC() {
         @Override
         override fun onPostExecute(result: String){
             if (result != null) {
                 Log.e("setText : ", "read")
-                mTextView?.text = "Read content: $result"
+                Log.e("setText pc : ", passwordCheck.toString())
+                Log.e("setText : ", result)
+                if(passwordCheck && result.equals(NFCContent) ){
+                    Log.e("setText : ", "startActivity")
+                    val intent = Intent(activity.applicationContext, NFCConnected::class.java)
+                    startActivity(intent)
+                }else{
+                    //mTextView?.text = "Read content: $result"
+                }
+
             }else{
                 Log.e("setText : ", "null")
             }
@@ -56,7 +60,6 @@ class NFC : AppCompatActivity() {
         setContentView(R.layout.activity_nfc)
         Log.d(TAG, "onCreate")
         mTextView = findViewById(R.id.textView_explanation);
-
         progressBar = findViewById(R.id.progressBar)
 
         user = findViewById(R.id.pw_user)
@@ -114,6 +117,7 @@ class NFC : AppCompatActivity() {
                 }
                 if (Password.credentials.find { it == Pair(userInput, passwordInput) } != null) {
                     // Lance handle
+                    passwordCheck = true;
                     handleIntent(intent);
                 } else {
                     val alertDialog = AlertDialog.Builder(this)
