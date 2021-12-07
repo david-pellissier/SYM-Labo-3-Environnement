@@ -3,25 +3,13 @@ package com.heigvd.sym.lab3_environment
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import java.util.*
 import android.nfc.NfcAdapter
-
-import android.content.IntentFilter.MalformedMimeTypeException
-
-import android.content.IntentFilter
-
-import android.app.PendingIntent
-
-import android.app.Activity
 import android.nfc.Tag
-import java.lang.RuntimeException
-
 import android.nfc.tech.Ndef
 import android.util.Log
 import android.widget.*
 import com.heigvd.sym.lab3_environment.Utils.ForegroundNFC
 import com.heigvd.sym.lab3_environment.Utils.manageNFC
-import kotlinx.coroutines.*
 
 
 class NFC : AppCompatActivity() {
@@ -33,18 +21,13 @@ class NFC : AppCompatActivity() {
     private var mNfcAdapter: NfcAdapter? = null
 
 
-    inner class manageNFCImpl : manageNFC() {
+    inner class ManageNFCImpl : manageNFC() {
         @Override
         override fun onPostExecute(result: String){
-            if (result != null) {
-                Log.e("setText : ", "read")
-                mTextView?.text = "Read content: $result"
-            }else{
-                Log.e("setText : ", "null")
-            }
+            Log.e("setText : ", "read")
+            mTextView?.text = "Read content: $result"
         }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,28 +35,8 @@ class NFC : AppCompatActivity() {
         Log.d(TAG, "onCreate")
         mTextView = findViewById(R.id.textView_explanation);
 
-        progressBar = findViewById(R.id.progressBar)
-
-        progressBar.setProgress(100);
-        /*https://stackoverflow.com/questions/43348623/how-to-call-a-function-after-delay-in-kotlin
-
-         */
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
-                progressBar.incrementProgressBy(-10)
-            }
-        }, 2000, 2000)
-
-
-        //Pop-up
-        val text = "Durée de vie"
-        val duration = Toast.LENGTH_SHORT
-        val toast = Toast.makeText(applicationContext, text, duration)
-        toast.show()
-
 
         //NFC code
-
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
             // Stop here, we definitely need NFC
@@ -107,7 +70,7 @@ class NFC : AppCompatActivity() {
             if (MIME_TEXT_PLAIN == type) {
                 val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
                 Log.e(TAG, "handleIntent")
-                manageNFCImpl().execute(tag)
+                this.ManageNFCImpl().execute(tag)
                 //NdefReaderTask().execute(tag)
             } else {
                 Log.e(TAG, "Wrong mime type: $type")
@@ -123,7 +86,7 @@ class NFC : AppCompatActivity() {
             val searchedTech = Ndef::class.java.name
             for (tech in techList) {
                 if (searchedTech == tech) {
-                    manageNFCImpl().execute(tag)
+                    this.ManageNFCImpl().execute(tag)
                     break
                 }
             }
