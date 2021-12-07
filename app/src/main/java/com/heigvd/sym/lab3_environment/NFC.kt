@@ -31,7 +31,6 @@ import kotlin.coroutines.CoroutineContext
 
 
 class NFC : AppCompatActivity() {
-    private var AUTHENTICATE_MAX = 10
     private lateinit var progressBar: ProgressBar
     val MIME_TEXT_PLAIN = "text/plain"
     val TAG = "Log - NfcDemo : "
@@ -40,34 +39,7 @@ class NFC : AppCompatActivity() {
     private var mNfcAdapter: NfcAdapter? = null
 
 
-    fun reduceBarre() {
 
-    }
-
-    class DownloadPicture(private var image: ImageView, private var url : String,
-                          private var handler : Handler
-    ) {
-
-        fun downloadPicture(){
-            val thread:Thread = object:Thread(){
-                override fun run(){
-                    try{
-                        //Define url
-                        val url = URL("https://thispersondoesnotexist.com/image")
-                        //Decode an input stream into a bitmap
-                        val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-
-                        //Update the GUI in thread specified by handler
-                        handler.post{image.setImageBitmap(bmp)}
-                    }catch(e : IOException){
-                        Log.e("Image : ", "Error during download")
-                    }
-                }
-
-            }
-            thread.start();
-        }
-    }
 
     inner  class Presenter : CoroutineScope {
         private var job: Job = Job()
@@ -200,21 +172,20 @@ class NFC : AppCompatActivity() {
         if (mNfcAdapter == null) {
             // Stop here, we definitely need NFC
             Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
-            finish();
-            return;
+            //finish();
+            //return;
 
-        }
-
-        if (!mNfcAdapter!!.isEnabled()) {
+        }else if (!mNfcAdapter!!.isEnabled()) {
             //mTextView.setText("NFC is disabled.");
             Toast.makeText(this, "NFC is disabled.", Toast.LENGTH_LONG).show();
-            finish();
+            //finish();
         } else {
             Toast.makeText(this, "NFC is enabled", Toast.LENGTH_LONG).show();
+            Log.d("Handle : ", "beginning")
+            handleIntent(intent);
             //mTextView.setText(R.string.explanation);
         }
-        Log.d("Handle : ", "beginning")
-        handleIntent(intent);
+
     }
 
     private fun handleIntent(intent: Intent) {
