@@ -21,6 +21,7 @@ import android.util.Log
 import android.widget.*
 import com.heigvd.sym.lab3_environment.Utils.ForegroundNFC
 import com.heigvd.sym.lab3_environment.Utils.manageNFC
+import androidx.appcompat.app.AlertDialog
 import kotlinx.coroutines.*
 
 
@@ -32,6 +33,9 @@ class NFC : AppCompatActivity() {
     protected var mTextView: TextView? = null
     private var mNfcAdapter: NfcAdapter? = null
 
+    private lateinit var user: EditText
+    private lateinit var password: EditText
+    private lateinit var validateButton: Button
 
     inner class manageNFCImpl : manageNFC() {
         @Override
@@ -46,6 +50,7 @@ class NFC : AppCompatActivity() {
     }
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nfc)
@@ -53,6 +58,10 @@ class NFC : AppCompatActivity() {
         mTextView = findViewById(R.id.textView_explanation);
 
         progressBar = findViewById(R.id.progressBar)
+
+        user = findViewById(R.id.pw_user)
+        password = findViewById(R.id.pw_pw)
+        validateButton = findViewById(R.id.btn_connect)
 
         progressBar.setProgress(100);
         /*https://stackoverflow.com/questions/43348623/how-to-call-a-function-after-delay-in-kotlin
@@ -78,17 +87,44 @@ class NFC : AppCompatActivity() {
         if (mNfcAdapter == null) {
             // Stop here, we definitely need NFC
             Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
-            //finish();
+            finish();
             //return;
 
         }else if (!mNfcAdapter!!.isEnabled()) {
             //mTextView.setText("NFC is disabled.");
             Toast.makeText(this, "NFC is disabled.", Toast.LENGTH_LONG).show();
-            //finish();
+            finish();
         } else {
             Toast.makeText(this, "NFC is enabled", Toast.LENGTH_LONG).show();
             Log.d("Handle : ", "beginning")
-            handleIntent(intent);
+            validateButton.setOnClickListener {
+                //on réinitialise les messages d'erreur
+                user.error = null
+                password.error = null
+
+                val userInput = user.text?.toString()
+                val passwordInput = password.text?.toString()
+
+                if (userInput.isNullOrEmpty() or passwordInput.isNullOrEmpty()) {
+                    if (userInput.isNullOrEmpty())
+                        user.error = "user empty"
+                    if (passwordInput.isNullOrEmpty())
+                        password.error = "password empty"
+                    return@setOnClickListener
+                }
+                if (Password.credentials.find { it == Pair(userInput, passwordInput) } != null) {
+                    // Lance handle
+                    handleIntent(intent);
+                } else {
+                    val alertDialog = AlertDialog.Builder(this)
+                    alertDialog.apply {
+                        setTitle("Error")
+                        setMessage("Invalid credentials")
+                    }.create()
+                    alertDialog.show()
+                    return@setOnClickListener
+                }
+            }
             //mTextView.setText(R.string.explanation);
         }
 
@@ -169,7 +205,12 @@ class NFC : AppCompatActivity() {
 
 
 
-
+    companion object {
+        val credentials: MutableList<Pair<String, String>> = mutableListOf(
+            Pair("user1", "1234"),
+            Pair("user2", "abcd")
+        )
+    }
 
 }
 
