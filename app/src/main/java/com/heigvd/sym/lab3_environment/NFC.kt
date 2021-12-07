@@ -40,29 +40,9 @@ class NFC : AppCompatActivity() {
         Log.d(TAG, "onCreate")
         mTextView = findViewById(R.id.textView_explanation);
 
-        progressBar = findViewById(R.id.progressBar)
-
         user = findViewById(R.id.pw_user)
         password = findViewById(R.id.pw_pw)
         validateButton = findViewById(R.id.btn_connect)
-
-        progressBar.setProgress(100);
-        /*https://stackoverflow.com/questions/43348623/how-to-call-a-function-after-delay-in-kotlin
-
-         */
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
-                progressBar.incrementProgressBy(-10)
-            }
-        }, 2000, 2000)
-
-
-        //Pop-up
-        val text = "Durée de vie"
-        val duration = Toast.LENGTH_SHORT
-        val toast = Toast.makeText(applicationContext, text, duration)
-        toast.show()
-
 
         //NFC code
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
