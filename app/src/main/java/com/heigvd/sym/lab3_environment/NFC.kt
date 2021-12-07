@@ -19,6 +19,7 @@ import java.lang.RuntimeException
 import android.nfc.tech.Ndef
 import android.util.Log
 import android.widget.*
+import com.heigvd.sym.lab3_environment.Utils.ForegroundNFC
 import com.heigvd.sym.lab3_environment.Utils.manageNFC
 import kotlinx.coroutines.*
 
@@ -136,7 +137,7 @@ class NFC : AppCompatActivity() {
         /**
          * Call this before onPause, otherwise an IllegalArgumentException is thrown as well.
          */
-        stopForegroundDispatch(this, mNfcAdapter!!)
+        ForegroundNFC().stopForegroundDispatch(this, mNfcAdapter!!)
         super.onPause()
     }
 
@@ -162,40 +163,10 @@ class NFC : AppCompatActivity() {
          * It's important, that the activity is in the foreground (resumed). Otherwise
          * an IllegalStateException is thrown.
          */
-        mNfcAdapter?.let { setupForegroundDispatch(this, it) };
+        mNfcAdapter?.let {  ForegroundNFC().setupForegroundDispatch(this, it) };
     }
 
-    /**
-     * @param activity The corresponding [Activity] requesting the foreground dispatch.
-     * @param adapter The [NfcAdapter] used for the foreground dispatch.
-     */
-    private fun setupForegroundDispatch(activity: Activity, adapter: NfcAdapter) {
-        Log.d(TAG, "setupForegroundDispatch")
-        val intent = Intent(activity.applicationContext, activity.javaClass)
-        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-        val pendingIntent = PendingIntent.getActivity(activity.applicationContext, 0, intent, 0)
-        val filters = arrayOfNulls<IntentFilter>(1)
-        val techList = arrayOf<Array<String>>()
 
-        // Notice that this is the same filter as in our manifest.
-        filters[0] = IntentFilter()
-        filters[0]!!.addAction(NfcAdapter.ACTION_NDEF_DISCOVERED)
-        filters[0]!!.addCategory(Intent.CATEGORY_DEFAULT)
-        try {
-            filters[0]!!.addDataType(MIME_TEXT_PLAIN)
-        } catch (e: MalformedMimeTypeException) {
-            throw RuntimeException("Check your mime type.")
-        }
-        adapter.enableForegroundDispatch(activity, pendingIntent, filters, techList)
-    }
-
-    /**
-     * @param activity The corresponding [BaseActivity] requesting to stop the foreground dispatch.
-     * @param adapter The [NfcAdapter] used for the foreground dispatch.
-     */
-    private fun stopForegroundDispatch(activity: Activity?, adapter: NfcAdapter) {
-        adapter.disableForegroundDispatch(activity)
-    }
 
 
 
