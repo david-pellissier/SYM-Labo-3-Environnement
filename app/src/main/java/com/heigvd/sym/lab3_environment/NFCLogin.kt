@@ -10,7 +10,7 @@ import com.heigvd.sym.lab3_environment.utils.NFCActivity
 import kotlinx.coroutines.*
 
 
-class NFC : NFCActivity() {
+class NFCLogin : NFCActivity() {
 
     private var mTextView: TextView? = null
 

@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnNFC.setOnClickListener {
-            val intent = Intent(this, NFC::class.java)
+            val intent = Intent(this, NFCLogin::class.java)
             startActivity(intent)
 
             return@setOnClickListener

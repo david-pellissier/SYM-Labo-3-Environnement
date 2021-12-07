@@ -1,6 +1,8 @@
 package com.heigvd.sym.lab3_environment.utils
 
+import android.app.PendingIntent
 import android.content.Intent
+import android.content.IntentFilter
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.nfc.tech.Ndef
@@ -9,6 +11,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.heigvd.sym.lab3_environment.R
+import java.lang.RuntimeException
 
 open class NFCActivity : AppCompatActivity(){
 
@@ -75,7 +78,7 @@ open class NFCActivity : AppCompatActivity(){
         /**
          * Call this before onPause, otherwise an IllegalArgumentException is thrown as well.
          */
-        ForegroundNFC().stopForegroundDispatch(this, mNfcAdapter!!)
+        mNfcAdapter!!.disableForegroundDispatch(this)
         super.onPause()
     }
 
@@ -101,7 +104,25 @@ open class NFCActivity : AppCompatActivity(){
          * It's important, that the activity is in the foreground (resumed). Otherwise
          * an IllegalStateException is thrown.
          */
-        mNfcAdapter?.let {  ForegroundNFC().setupForegroundDispatch(this, it) };
+        mNfcAdapter?.let {
+            Log.d(TAG, "setupForegroundDispatch")
+            val intent = Intent(applicationContext, javaClass)
+            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+            val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0)
+            val filters = arrayOfNulls<IntentFilter>(1)
+            val techList = arrayOf<Array<String>>()
+
+            // Notice that this is the same filter as in our manifest.
+            filters[0] = IntentFilter()
+            filters[0]!!.addAction(NfcAdapter.ACTION_NDEF_DISCOVERED)
+            filters[0]!!.addCategory(Intent.CATEGORY_DEFAULT)
+            try {
+                filters[0]!!.addDataType(MIME_TEXT_PLAIN)
+            } catch (e: IntentFilter.MalformedMimeTypeException) {
+                throw RuntimeException("Check your mime type.")
+            }
+            it.enableForegroundDispatch(this, pendingIntent, filters, techList)
+        };
     }
 
     companion object {
