@@ -13,28 +13,42 @@ import com.heigvd.sym.lab3_environment.R
 open class NFCActivity : AppCompatActivity(){
 
     private var mNfcAdapter: NfcAdapter? = null
+    protected var nfcPostExecute : ManageNFC? = null
 
-    private val activity = this;
+    fun handleIntent(intent: Intent) {
+        val action = intent.action
+        Log.e("handleIntent : ", "begin2")
 
-    inner class ManageNFCImpl : ManageNFC() {
-
-        private fun checkNFC(text: String) : Boolean {
-
-            if(text == NFCContent){
-                return true
-            }else{
-                Log.e(TAG, "Wrong NFC value: $text")
-                return false
+        /*
+        Intent to start an activity when a tag with NDEF payload is discovered.
+         */
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED == action) { // TODO: check if necessary (included in second)
+            Log.e(TAG, "begin3")
+            val type = intent.type
+            if (MIME_TEXT_PLAIN == type) {
+                val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
+                Log.e(TAG, "handleIntent")
+                nfcPostExecute?.execute(tag)
+            } else {
+                Log.e(TAG, "Wrong MIME type: $type")
             }
+            //Intent to start an activity when a tag is discovered.
+        } else if (NfcAdapter.ACTION_TECH_DISCOVERED == action) {
 
-        }
-
-        @Override
-        override fun onPostExecute(result: String){
-            if(checkNFC(result))
-                return
-
-            // ... completed in implementations
+            // In case we would still use the Tech Discovered Intent
+            Log.e(TAG, "action-tech-discovers")
+            Toast.makeText(this, "Taction-tech-discovers", Toast.LENGTH_LONG).show();
+            val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
+            val techList: Array<String> = tag?.getTechList() as Array<String>
+            val searchedTech = Ndef::class.java.name
+            for (tech in techList) {
+                if (searchedTech == tech) {
+                    nfcPostExecute?.execute(tag)
+                    break
+                }
+            }
+        } else {
+            Log.d(TAG, "Nothing")
         }
     }
 
@@ -56,44 +70,6 @@ open class NFCActivity : AppCompatActivity(){
             Toast.makeText(this, "NFC is enabled", Toast.LENGTH_LONG).show();
         }
     }
-
-    private fun handleIntent(intent: Intent) {
-        val action = intent.action
-        Log.e("handleIntent : ", "begin2")
-
-        /*
-        Intent to start an activity when a tag with NDEF payload is discovered.
-         */
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED == action) { // TODO: check if necessary (included in second)
-            Log.e(TAG, "begin3")
-            val type = intent.type
-            if (MIME_TEXT_PLAIN == type) {
-                val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
-                Log.e(TAG, "handleIntent")
-                this.ManageNFCImpl().execute(tag)
-            } else {
-                Log.e(TAG, "Wrong MIME type: $type")
-            }
-            //Intent to start an activity when a tag is discovered.
-        } else if (NfcAdapter.ACTION_TECH_DISCOVERED == action) {
-
-            // In case we would still use the Tech Discovered Intent
-            Log.e(TAG, "action-tech-discovers")
-            Toast.makeText(this, "Taction-tech-discovers", Toast.LENGTH_LONG).show();
-            val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
-            val techList: Array<String> = tag?.getTechList() as Array<String>
-            val searchedTech = Ndef::class.java.name
-            for (tech in techList) {
-                if (searchedTech == tech) {
-                    this.ManageNFCImpl().execute(tag)
-                    break
-                }
-            }
-        } else {
-            Log.d(TAG, "Nothing")
-        }
-    }
-
 
     override fun onPause() {
         /**
