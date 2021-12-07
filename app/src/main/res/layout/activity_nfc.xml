@@ -11,21 +11,8 @@
         android:id="@+id/sign_in_email_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="192dp"
+        android:layout_marginTop="148dp"
         android:text="@string/username_hint"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/pw_user"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/sign_in_email_title"
-        android:layout_marginTop="224dp"
-        android:hint="@string/main_username_hint"
-        android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/pw_user"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="36dp"
         android:text="@string/password_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -48,7 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/sign_in_password_title"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="68dp"
         android:hint="@string/main_password_hint"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
@@ -56,18 +43,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pw_user" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/pw_user"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
+        android:layout_below="@id/sign_in_email_title"
+        android:layout_marginTop="180dp"
+        android:hint="@string/main_username_hint"
+        android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.46"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        android:max="10"
-        android:progress="0"
-        style="?android:progressBarStyleHorizontal"
-        app:layout_constraintTop_toBottomOf="@+id/pw_pw" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btn_connect"

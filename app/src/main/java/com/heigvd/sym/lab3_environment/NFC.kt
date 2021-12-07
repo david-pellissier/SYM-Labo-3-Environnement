@@ -3,7 +3,6 @@ package com.heigvd.sym.lab3_environment
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import java.util.*
 import android.nfc.NfcAdapter
 
 import android.nfc.Tag
@@ -53,39 +52,17 @@ class NFC : AppCompatActivity() {
         }
     }
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nfc)
         Log.d(TAG, "onCreate")
         mTextView = findViewById(R.id.textView_explanation);
-        progressBar = findViewById(R.id.progressBar)
 
         user = findViewById(R.id.pw_user)
         password = findViewById(R.id.pw_pw)
         validateButton = findViewById(R.id.btn_connect)
 
-        progressBar.setProgress(100);
-        /*https://stackoverflow.com/questions/43348623/how-to-call-a-function-after-delay-in-kotlin
-
-         */
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
-                progressBar.incrementProgressBy(-10)
-            }
-        }, 2000, 2000)
-
-
-        //Pop-up
-        val text = "Durée de vie"
-        val duration = Toast.LENGTH_SHORT
-        val toast = Toast.makeText(applicationContext, text, duration)
-        toast.show()
-
-
         //NFC code
-
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
             // Stop here, we definitely need NFC
@@ -115,7 +92,7 @@ class NFC : AppCompatActivity() {
                         password.error = "password empty"
                     return@setOnClickListener
                 }
-                if (Password.credentials.find { it == Pair(userInput, passwordInput) } != null) {
+                if (NFC.credentials.find { it == Pair(userInput, passwordInput) } != null) {
                     // Lance handle
                     passwordCheck = true;
                     handleIntent(intent);
@@ -147,7 +124,7 @@ class NFC : AppCompatActivity() {
             if (MIME_TEXT_PLAIN == type) {
                 val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
                 Log.e(TAG, "handleIntent")
-                manageNFCImpl().execute(tag)
+                this.ManageNFCImpl().execute(tag)
                 //NdefReaderTask().execute(tag)
             } else {
                 Log.e(TAG, "Wrong mime type: $type")
@@ -163,7 +140,7 @@ class NFC : AppCompatActivity() {
             val searchedTech = Ndef::class.java.name
             for (tech in techList) {
                 if (searchedTech == tech) {
-                    manageNFCImpl().execute(tag)
+                    this.ManageNFCImpl().execute(tag)
                     break
                 }
             }
