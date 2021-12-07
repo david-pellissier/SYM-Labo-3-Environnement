@@ -112,7 +112,7 @@ class NFC : AppCompatActivity() {
                         password.error = "password empty"
                     return@setOnClickListener
                 }
-                if (Password.credentials.find { it == Pair(userInput, passwordInput) } != null) {
+                if (NFC.credentials.find { it == Pair(userInput, passwordInput) } != null) {
                     // Lance handle
                     handleIntent(intent);
                 } else {
