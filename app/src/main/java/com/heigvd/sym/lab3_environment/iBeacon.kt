@@ -15,7 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.*
 
-
+// https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime
 class iBeacon : AppCompatActivity() {
 
     private var fusedLocationProvider: FusedLocationProviderClient? = null
