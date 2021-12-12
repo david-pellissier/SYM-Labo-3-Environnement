@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btniBeacon.setOnClickListener {
-            val intent = Intent(this, iBeacon::class.java)
+            val intent = Intent(this, IBeacon::class.java)
             startActivity(intent)
 
             return@setOnClickListener
