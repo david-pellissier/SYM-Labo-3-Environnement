@@ -39,7 +39,7 @@ class Barcode : AppCompatActivity() {
             resultTextView.text = result.text
 
             //Added preview of scanned barcode
-            val imageView = findViewById<ImageView>(R.id.barcodePreview)
+            val imageView = findViewById<ImageView>(R.id.barcode_preview)
             imageView.setImageBitmap(result.getBitmapWithResultPoints(Color.YELLOW))
         }
 
@@ -52,7 +52,8 @@ class Barcode : AppCompatActivity() {
         setContentView(R.layout.activity_barcode)
 
         barcodeView = findViewById(R.id.barcode_scanner)
-        resultTextView = findViewById(R.id.text_result)
+        barcodeView.setStatusText("")
+        resultTextView = findViewById(R.id.barcode_result)
         val formats: Collection<BarcodeFormat> =
             Arrays.asList(BarcodeFormat.QR_CODE, BarcodeFormat.CODE_39)
         barcodeView.barcodeView.decoderFactory = DefaultDecoderFactory(formats)
