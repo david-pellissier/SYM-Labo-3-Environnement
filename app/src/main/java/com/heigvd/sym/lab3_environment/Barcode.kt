@@ -3,6 +3,7 @@ package com.heigvd.sym.lab3_environment
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.graphics.Color
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.zxing.ResultPoint
@@ -59,11 +60,11 @@ class Barcode : AppCompatActivity() {
         barcodeView.pause()
     }
 
-    fun pause() {
+    fun pause(view: View?) {
         barcodeView.pause()
     }
 
-    fun resume() {
+    fun resume(view: View?) {
         barcodeView.resume()
     }
 
