@@ -14,6 +14,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.*
+import android.util.Log
+import androidx.lifecycle.Observer
+import com.heigvd.sym.lab3_environment.NFCLogin.Companion.TAG
+import org.altbeacon.beacon.*
+import org.altbeacon.beacon.BeaconParser
+
+
+
 
 // https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime
 class iBeacon : AppCompatActivity() {
@@ -48,8 +56,27 @@ class iBeacon : AppCompatActivity() {
 
         fusedLocationProvider = LocationServices.getFusedLocationProviderClient(this)
 
+
+
         checkLocationPermission()
+        // TODO: Add beaconParsers for any properietry beacon formats you wish to detect
+
+        val beaconManager =  BeaconManager.getInstanceForApplication(this)
+        val region = Region("all-beacons-region", null, null, null)
+        beaconManager.beaconParsers.add(BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"))
+        beaconManager.getRegionViewModel(region).rangedBeacons.observe(this, rangingObserver)
+        beaconManager.startRangingBeacons(region)
+
+        Log.d(TAG, "WHAAAT")
     }
+
+    val rangingObserver = Observer<Collection<Beacon>> { beacons ->
+        Log.d(TAG, "Ranged: ${beacons.count()} beacons")
+        for (beacon: Beacon in beacons) {
+            Log.d(TAG, "$beacon about ${beacon.distance} meters away")
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()
