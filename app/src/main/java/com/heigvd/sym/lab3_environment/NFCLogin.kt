@@ -25,7 +25,6 @@ class NFCLogin : NFCActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nfc)
         Log.d(TAG, "onCreate")
-        mTextView = findViewById(R.id.textView_explanation);
 
         user = findViewById(R.id.pw_user)
         password = findViewById(R.id.pw_pw)
