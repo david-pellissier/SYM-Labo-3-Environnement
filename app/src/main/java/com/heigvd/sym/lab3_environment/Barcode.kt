@@ -9,6 +9,9 @@ import android.widget.TextView
 import com.google.zxing.ResultPoint
 import com.journeyapps.barcodescanner.*
 import com.google.zxing.BarcodeFormat
+import android.Manifest
+import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.widget.Toast.*
 
 class Barcode : AppCompatActivity() {
 
@@ -17,6 +20,8 @@ class Barcode : AppCompatActivity() {
     private lateinit var resultImageView: ImageView
 
     private var lastText: String = ""
+
+    private var isCameraPermissionGranted = false
 
     private val callback: BarcodeCallback = object : BarcodeCallback {
         override fun barcodeResult(result: BarcodeResult) {
@@ -35,6 +40,11 @@ class Barcode : AppCompatActivity() {
         override fun possibleResultPoints(resultPoints: List<ResultPoint>) {}
     }
 
+    private fun initBarcode(){
+        barcodeView.barcodeView.decoderFactory = DefaultDecoderFactory(FORMATS)
+        barcodeView.initializeFromIntent(intent)
+        barcodeView.decodeContinuous(callback)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,31 +55,70 @@ class Barcode : AppCompatActivity() {
 
         barcodeView = findViewById(R.id.barcode_scanner)
         barcodeView.setStatusText("")
-        barcodeView.barcodeView.decoderFactory = DefaultDecoderFactory(FORMATS)
-        barcodeView.initializeFromIntent(intent)
-        barcodeView.decodeContinuous(callback)
+
+        isCameraPermissionGranted = (this.checkSelfPermission(CAMERA_PERM) == PERMISSION_GRANTED)
+
+        if(isCameraPermissionGranted){
+            initBarcode()
+        }
+        else {
+            this.requestPermissions(arrayOf(CAMERA_PERM), REQUEST_CODE_CAMERA)
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        barcodeView.resume()
+
+        if(isCameraPermissionGranted){
+            barcodeView.resume()
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        barcodeView.pause()
+
+        if(isCameraPermissionGranted) {
+            barcodeView.pause()
+        }
     }
 
     fun pause(view: View?) {
-        barcodeView.pause()
+        if(isCameraPermissionGranted){
+            barcodeView.pause()
+        }
+
     }
 
     fun resume(view: View?) {
-        barcodeView.resume()
+        if(isCameraPermissionGranted){
+            barcodeView.resume()
+        }
+
     }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String?>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CODE_CAMERA) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PERMISSION_GRANTED) {
+                isCameraPermissionGranted = true
+                initBarcode()
+            } else {
+                makeText(this, "Camera permission denied. The scanner will not work.", LENGTH_LONG).show()
+                resultTextView.text = "Camera disabled"
+            }
+        }
+    }
+
 
     companion object {
         private val FORMATS = listOf(BarcodeFormat.QR_CODE, BarcodeFormat.CODE_39)
         private const val DOT_COLOR = Color.YELLOW
+        private const val CAMERA_PERM = Manifest.permission.CAMERA
+        private const val REQUEST_CODE_CAMERA = 101
     }
 }
