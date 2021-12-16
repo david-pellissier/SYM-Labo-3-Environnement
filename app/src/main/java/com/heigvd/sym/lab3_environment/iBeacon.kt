@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.*
 import android.util.Log
+import android.widget.ListView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,7 +31,7 @@ import org.altbeacon.beacon.BeaconParser
 // https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime
 class iBeacon : AppCompatActivity() {
     private val beaconList : ArrayList<BeaconUtils> = ArrayList()
-
+    private var adapter: BeaconAdapter? = null
     private var fusedLocationProvider: FusedLocationProviderClient? = null
     private val locationRequest: LocationRequest = LocationRequest.create().apply {
         interval = 30
@@ -65,12 +66,11 @@ class iBeacon : AppCompatActivity() {
 
         checkLocationPermission()
         // TODO: Add beaconParsers for any properietry beacon formats you wish to detect
-        val recyclerView : RecyclerView = findViewById(R.id.recyclerView)
+        val recyclerView : ListView = findViewById(R.id.recyclerView)
 
         with(recyclerView) {
-            layoutManager = LinearLayoutManager(this@iBeacon)
+            //layoutManager = LinearLayoutManager(this@iBeacon)
             adapter = BeaconAdapter(beaconList, context)
-            adapter.notifyItemChanged(2)
         }
 
         beaconList.add(BeaconUtils("test", "test1", "test3", "test4"))
@@ -90,7 +90,8 @@ class iBeacon : AppCompatActivity() {
         for (beacon: Beacon in beacons) {
             beaconList.add(BeaconUtils(
                 beacon.id1.toString(),beacon.id2.toString(), beacon.id3.toString(), beacon.rssi.toString()))
-            adapter.notifyDataSetChanged();
+            adapter?.addBeacon(BeaconUtils(
+                beacon.id1.toString(),beacon.id2.toString(), beacon.id3.toString(), beacon.rssi.toString()))
             Log.d(TAG, "$beacon about ${beacon.distance} meters away")
             Log.d(TAG + "Identifier", beacon.identifiers.toString())
             Log.d(TAG +"uiid", beacon.serviceUuid.toString())
