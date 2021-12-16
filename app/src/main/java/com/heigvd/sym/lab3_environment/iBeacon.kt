@@ -16,7 +16,11 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.location.*
 import android.util.Log
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.heigvd.sym.lab3_environment.NFCLogin.Companion.TAG
+import com.heigvd.sym.lab3_environment.utils.BeaconAdapter
+import com.heigvd.sym.lab3_environment.utils.BeaconUtils
 import org.altbeacon.beacon.*
 import org.altbeacon.beacon.BeaconParser
 
@@ -25,6 +29,7 @@ import org.altbeacon.beacon.BeaconParser
 
 // https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime
 class iBeacon : AppCompatActivity() {
+    private val beaconList : ArrayList<BeaconUtils> = ArrayList()
 
     private var fusedLocationProvider: FusedLocationProviderClient? = null
     private val locationRequest: LocationRequest = LocationRequest.create().apply {
@@ -60,6 +65,15 @@ class iBeacon : AppCompatActivity() {
 
         checkLocationPermission()
         // TODO: Add beaconParsers for any properietry beacon formats you wish to detect
+        val recyclerView : RecyclerView = findViewById(R.id.recyclerView)
+
+        with(recyclerView) {
+            layoutManager = LinearLayoutManager(this@iBeacon)
+            adapter = BeaconAdapter(beaconList, context)
+            adapter.notifyItemChanged(2)
+        }
+
+        beaconList.add(BeaconUtils("test", "test1", "test3", "test4"))
 
         val beaconManager =  BeaconManager.getInstanceForApplication(this)
         val region = Region("all-beacons-region", null, null, null)
@@ -72,8 +86,19 @@ class iBeacon : AppCompatActivity() {
 
     val rangingObserver = Observer<Collection<Beacon>> { beacons ->
         Log.d(TAG, "Ranged: ${beacons.count()} beacons")
+
         for (beacon: Beacon in beacons) {
+            beaconList.add(BeaconUtils(
+                beacon.id1.toString(),beacon.id2.toString(), beacon.id3.toString(), beacon.rssi.toString()))
+            adapter.notifyDataSetChanged();
             Log.d(TAG, "$beacon about ${beacon.distance} meters away")
+            Log.d(TAG + "Identifier", beacon.identifiers.toString())
+            Log.d(TAG +"uiid", beacon.serviceUuid.toString())
+            Log.d(TAG +"id1", beacon.id1.toString())
+            Log.d(TAG +"mineur", beacon.id2.toString())
+            Log.d(TAG +"mineur", beacon.id3.toString())
+            Log.d(TAG +"RSSI", beacon.rssi.toString())
+
         }
     }
 
