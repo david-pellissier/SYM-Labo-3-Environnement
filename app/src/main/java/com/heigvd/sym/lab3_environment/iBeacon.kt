@@ -50,12 +50,12 @@ class iBeacon : AppCompatActivity() {
             if (locationList.isNotEmpty()) {
                 //The last location in the list is the newest
                 val location = locationList.last()
-                Toast.makeText(
+                /*Toast.makeText(
                     this@iBeacon,
                     "Got Location: " + location.toString(),
                     Toast.LENGTH_LONG
                 )
-                    .show()
+                    .show() */
             }
         }
     }
