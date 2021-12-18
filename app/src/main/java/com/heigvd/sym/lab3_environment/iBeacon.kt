@@ -72,13 +72,6 @@ class iBeacon : AppCompatActivity() {
         adapter = BeaconAdapter(beaconList, applicationContext)
         recyclerView.adapter = adapter
 
-        /*with(recyclerView) {
-            //layoutManager = LinearLayoutManager(this@iBeacon)
-            adapter = BeaconAdapter(beaconList, context)
-        }*/
-        adapter?.addBeacon(BeaconUtils("test", "test1", "test3", "test4"))
-        //beaconList.add(BeaconUtils("test", "test1", "test3", "test4"))
-
         val beaconManager = BeaconManager.getInstanceForApplication(this)
         val region = Region("all-beacons-region", null, null, null)
         beaconManager.beaconParsers.add(BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"))
@@ -92,7 +85,6 @@ class iBeacon : AppCompatActivity() {
         Log.d(TAG, "Ranged: ${beacons.count()} beacons")
 
         for (beacon: Beacon in beacons) {
-            Log.d(TAG, "add beacon")
             beaconList.add(BeaconUtils(
                 beacon.id1.toString(),beacon.id2.toString(), beacon.id3.toString(), beacon.rssi.toString()))
             adapter?.addBeacon(BeaconUtils(
@@ -100,11 +92,6 @@ class iBeacon : AppCompatActivity() {
             Log.d(TAG, "$beacon about ${beacon.distance} meters away")
             Log.d(TAG + "Identifier", beacon.identifiers.toString())
             Log.d(TAG +"uiid", beacon.serviceUuid.toString())
-            Log.d(TAG +"id1", beacon.id1.toString())
-            Log.d(TAG +"mineur", beacon.id2.toString())
-            Log.d(TAG +"mineur", beacon.id3.toString())
-            Log.d(TAG +"RSSI", beacon.rssi.toString())
-
         }
     }
 
