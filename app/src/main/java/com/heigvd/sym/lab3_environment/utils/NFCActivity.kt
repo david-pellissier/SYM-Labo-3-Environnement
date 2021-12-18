@@ -2,6 +2,9 @@
  * Groupe : Pellissier David, Ruckstuhl Michael, Sauge Ryan
  * Description : Classe abstraite servant à définir le comportement pour les activités reposant sur
  *               le scan NFC.
+ * Sources :
+ * https://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
+ *
  */
 
 package com.heigvd.sym.lab3_environment.utils
@@ -38,6 +41,7 @@ abstract class NFCActivity() : AppCompatActivity() {
                 Log.e(TAG, "Wrong MIME type: $type")
             }
             //Intent to start an activity when a tag is discovered.
+            //Not necessary for the lab but makes it easier to extend the application to other tags
         } else if (NfcAdapter.ACTION_TECH_DISCOVERED == action) {
             // In case we would still use the Tech Discovered Intent
             Toast.makeText(this, "Taction-tech-discovers", Toast.LENGTH_LONG).show()
@@ -51,7 +55,7 @@ abstract class NFCActivity() : AppCompatActivity() {
                 }
             }
         } else {
-            Log.d(TAG, "Nothing")
+            Log.d(TAG, "No tags found")
         }
     }
 
