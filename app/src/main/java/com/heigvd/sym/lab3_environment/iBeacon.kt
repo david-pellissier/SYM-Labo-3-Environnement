@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
@@ -135,20 +134,9 @@ class iBeacon : AppCompatActivity() {
                 // No explanation needed, we can request the permission.
                 requestLocationPermission()
             }
-        } else {
-            checkBackgroundLocation()
         }
     }
 
-    private fun checkBackgroundLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestBackgroundLocationPermission()
-        }
-    }
 
     private fun requestLocationPermission() {
         ActivityCompat.requestPermissions(
@@ -158,24 +146,6 @@ class iBeacon : AppCompatActivity() {
             ),
             MY_PERMISSIONS_REQUEST_LOCATION
         )
-    }
-
-    private fun requestBackgroundLocationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                ),
-                MY_PERMISSIONS_REQUEST_BACKGROUND_LOCATION
-            )
-        } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                MY_PERMISSIONS_REQUEST_LOCATION
-            )
-        }
     }
 
     override fun onRequestPermissionsResult(
@@ -201,8 +171,6 @@ class iBeacon : AppCompatActivity() {
                             Looper.getMainLooper()
                         )
 
-                        // Now check background location
-                        checkBackgroundLocation()
                     }
 
                 } else {
@@ -228,43 +196,10 @@ class iBeacon : AppCompatActivity() {
                 }
                 return
             }
-            MY_PERMISSIONS_REQUEST_BACKGROUND_LOCATION -> {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(
-                            this,
-                            Manifest.permission.ACCESS_FINE_LOCATION
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
-                        fusedLocationProvider?.requestLocationUpdates(
-                            locationRequest,
-                            locationCallback,
-                            Looper.getMainLooper()
-                        )
-
-                        Toast.makeText(
-                            this,
-                            "Granted Background Location Permission",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show()
-                }
-                return
-
-            }
         }
     }
 
     companion object {
         private const val MY_PERMISSIONS_REQUEST_LOCATION = 99
-        private const val MY_PERMISSIONS_REQUEST_BACKGROUND_LOCATION = 66
     }
 }
