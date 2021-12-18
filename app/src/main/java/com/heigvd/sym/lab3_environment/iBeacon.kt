@@ -60,15 +60,12 @@ class iBeacon : AppCompatActivity() {
         fusedLocationProvider = LocationServices.getFusedLocationProviderClient(this)
 
         checkLocationPermission()
-        // TODO: Add beaconParsers for any properietry beacon formats you wish to detect
 
         val beaconManager = BeaconManager.getInstanceForApplication(this)
         val region = Region("all-beacons-region", null, null, null)
         beaconManager.beaconParsers.add(BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"))
         beaconManager.getRegionViewModel(region).rangedBeacons.observe(this, rangingObserver)
         beaconManager.startRangingBeacons(region)
-
-        Log.d(TAG, "WHAAAT")
     }
 
     val rangingObserver = Observer<Collection<Beacon>> { beacons ->
