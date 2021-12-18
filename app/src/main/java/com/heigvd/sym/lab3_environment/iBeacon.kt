@@ -1,3 +1,9 @@
+/**
+ * Groupe : Pellissier David, Ruckstuhl Michael, Sauge Ryan
+ * Description : Activité pour la partie "iBeacon" du laboratoire.
+ *               L'application demande les permissions nécessaires
+ */
+
 package com.heigvd.sym.lab3_environment
 
 import android.Manifest
@@ -9,18 +15,15 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.*
-import android.util.Log
 import androidx.lifecycle.Observer
+import com.google.android.gms.location.*
 import com.heigvd.sym.lab3_environment.NFCLogin.Companion.TAG
 import org.altbeacon.beacon.*
-import org.altbeacon.beacon.BeaconParser
-
-
 
 
 // https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime
@@ -56,12 +59,10 @@ class iBeacon : AppCompatActivity() {
 
         fusedLocationProvider = LocationServices.getFusedLocationProviderClient(this)
 
-
-
         checkLocationPermission()
         // TODO: Add beaconParsers for any properietry beacon formats you wish to detect
 
-        val beaconManager =  BeaconManager.getInstanceForApplication(this)
+        val beaconManager = BeaconManager.getInstanceForApplication(this)
         val region = Region("all-beacons-region", null, null, null)
         beaconManager.beaconParsers.add(BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"))
         beaconManager.getRegionViewModel(region).rangedBeacons.observe(this, rangingObserver)
@@ -117,9 +118,6 @@ class iBeacon : AppCompatActivity() {
                     Manifest.permission.ACCESS_FINE_LOCATION
                 )
             ) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
                 AlertDialog.Builder(this)
                     .setTitle("Location Permission Needed")
                     .setMessage("This app needs the Location permission, please accept to use location functionality")
@@ -183,6 +181,7 @@ class iBeacon : AppCompatActivity() {
         permissions: Array<String>,
         grantResults: IntArray
     ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             MY_PERMISSIONS_REQUEST_LOCATION -> {
                 // If request is cancelled, the result arrays are empty.
@@ -252,10 +251,7 @@ class iBeacon : AppCompatActivity() {
                         ).show()
                     }
                 } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
                 }
                 return
 
