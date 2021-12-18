@@ -1,3 +1,10 @@
+/**
+ * Groupe : Pellissier David, Ruckstuhl Michael, Sauge Ryan
+ * Description : Activité à afficher lorsque l'utilisateur s'est connecté via l'activité NFCLogin.
+ *               Le niveau d'authentification baisse au cours du temps et il est possible de scanner
+ *               à nouveau le tag NFC pour le remettre au maximum.
+ */
+
 package com.heigvd.sym.lab3_environment
 
 import android.os.Bundle
@@ -10,7 +17,7 @@ import com.heigvd.sym.lab3_environment.utils.ManageNFC
 import com.heigvd.sym.lab3_environment.utils.NFCActivity
 import java.util.*
 
-class NFCConnected : NFCActivity(continuousScan = true) {
+class NFCConnected : NFCActivity() {
 
     private lateinit var btnMax: Button
     private lateinit var btnMedium: Button
@@ -32,9 +39,9 @@ class NFCConnected : NFCActivity(continuousScan = true) {
         // Decrease authentication level periodically
         progressBar.max = AUTHENTICATE_MAX
         progressBar.progress = AUTHENTICATE_MAX
-        timer.schedule(object: TimerTask() {
+        timer.schedule(object : TimerTask() {
             override fun run() {
-                if(authStatus > 0){
+                if (authStatus > 0) {
                     handler.post {
                         authStatus -= AUTHENTICATE_DECREASE
                         progressBar.setProgress(authStatus, true)
@@ -58,10 +65,8 @@ class NFCConnected : NFCActivity(continuousScan = true) {
 
         //Start NFC scan
         handleIntent(intent);
-
         nfcPostExecute = object : ManageNFC() {
-            @Override
-            override fun onPostExecute(result: String){
+            override fun onPostExecute(result: String) {
                 super.onPostExecute(result) // basic check is performed in there
                 refreshAuthStatus()
             }
@@ -69,7 +74,7 @@ class NFCConnected : NFCActivity(continuousScan = true) {
     }
 
     private fun checkAuthLevel(level: Int) {
-        val message = if(authStatus > level) AUTH_SUFFICIENT else AUTH_INSUFFICIENT
+        val message = if (authStatus > level) AUTH_SUFFICIENT else AUTH_INSUFFICIENT
         Toast.makeText(this, "$message ($authStatus/$level)", Toast.LENGTH_SHORT).show()
     }
 
@@ -88,7 +93,7 @@ class NFCConnected : NFCActivity(continuousScan = true) {
         private const val AUTH_INSUFFICIENT = "Insufficient authentication"
 
         private const val AUTHENTICATE_DECREASE = 1
-        private const val DELAY_MS : Long = 150
+        private const val DELAY_MS: Long = 150
         private const val TAG = "NFC/Connected"
     }
 }
