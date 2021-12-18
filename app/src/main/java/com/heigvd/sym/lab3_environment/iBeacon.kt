@@ -21,14 +21,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.*
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.ListView
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.heigvd.sym.lab3_environment.NFCLogin.Companion.TAG
 import com.heigvd.sym.lab3_environment.utils.BeaconAdapter
 import com.heigvd.sym.lab3_environment.utils.BeaconUtils
@@ -56,12 +50,12 @@ class iBeacon : AppCompatActivity() {
             if (locationList.isNotEmpty()) {
                 //The last location in the list is the newest
                 val location = locationList.last()
-                Toast.makeText(
+                /*Toast.makeText(
                     this@iBeacon,
                     "Got Location: " + location.toString(),
                     Toast.LENGTH_LONG
                 )
-                    .show()
+                    .show() */
             }
         }
     }
@@ -172,18 +166,6 @@ class iBeacon : AppCompatActivity() {
                 // No explanation needed, we can request the permission.
                 requestLocationPermission()
             }
-        } else {
-            checkBackgroundLocation()
-        }
-    }
-
-    private fun checkBackgroundLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestBackgroundLocationPermission()
         }
     }
 
@@ -195,24 +177,6 @@ class iBeacon : AppCompatActivity() {
             ),
             MY_PERMISSIONS_REQUEST_LOCATION
         )
-    }
-
-    private fun requestBackgroundLocationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                ),
-                MY_PERMISSIONS_REQUEST_BACKGROUND_LOCATION
-            )
-        } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                MY_PERMISSIONS_REQUEST_LOCATION
-            )
-        }
     }
 
     override fun onRequestPermissionsResult(
@@ -238,9 +202,6 @@ class iBeacon : AppCompatActivity() {
                             locationCallback,
                             Looper.getMainLooper()
                         )
-
-                        // Now check background location
-                        checkBackgroundLocation()
                     }
 
                 } else {
@@ -266,40 +227,10 @@ class iBeacon : AppCompatActivity() {
                 }
                 return
             }
-            MY_PERMISSIONS_REQUEST_BACKGROUND_LOCATION -> {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
-                    if (ContextCompat.checkSelfPermission(
-                            this,
-                            Manifest.permission.ACCESS_FINE_LOCATION
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
-                        fusedLocationProvider?.requestLocationUpdates(
-                            locationRequest,
-                            locationCallback,
-                            Looper.getMainLooper()
-                        )
-
-                        Toast.makeText(
-                            this,
-                            "Granted Background Location Permission",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                } else {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
-                }
-                return
-
-            }
         }
     }
 
     companion object {
         private const val MY_PERMISSIONS_REQUEST_LOCATION = 99
-        private const val MY_PERMISSIONS_REQUEST_BACKGROUND_LOCATION = 66
     }
 }
