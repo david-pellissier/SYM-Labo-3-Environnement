@@ -1,3 +1,9 @@
+/**
+ * Groupe : Pellissier David, Ruckstuhl Michael, Sauge Ryan
+ * Description : Activité pour la partie "iBeacon" du laboratoire.
+ *               L'application demande les permissions nécessaires
+ */
+
 package com.heigvd.sym.lab3_environment
 
 import android.Manifest
@@ -66,8 +72,6 @@ class iBeacon : AppCompatActivity() {
 
         fusedLocationProvider = LocationServices.getFusedLocationProviderClient(this)
 
-
-
         checkLocationPermission()
         // TODO: Add beaconParsers for any properietry beacon formats you wish to detect
         val recyclerView : ListView = findViewById(R.id.recyclerView)
@@ -81,13 +85,11 @@ class iBeacon : AppCompatActivity() {
         adapter?.addBeacon(BeaconUtils("test", "test1", "test3", "test4"))
         //beaconList.add(BeaconUtils("test", "test1", "test3", "test4"))
 
-        val beaconManager =  BeaconManager.getInstanceForApplication(this)
+        val beaconManager = BeaconManager.getInstanceForApplication(this)
         val region = Region("all-beacons-region", null, null, null)
         beaconManager.beaconParsers.add(BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"))
         beaconManager.getRegionViewModel(region).rangedBeacons.observe(this, rangingObserver)
         beaconManager.startRangingBeacons(region)
-
-        Log.d(TAG, "WHAAAT")
     }
 
 
@@ -288,10 +290,7 @@ class iBeacon : AppCompatActivity() {
                         ).show()
                     }
                 } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show()
                 }
                 return
 

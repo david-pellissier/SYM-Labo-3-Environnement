@@ -1,18 +1,23 @@
+/**
+ * Groupe : Pellissier David, Ruckstuhl Michael, Sauge Ryan
+ * Description : Page d'authentification pour la partie NFC (labo partie 2).
+ *               L'utilisateur se connecte en entrant ses credentials et scannant le tag NFC en
+ *               appuyant sur le bouton de connexion.
+ *               Pour se connecter : user1:1234 et user2:abcd
+ */
+
 package com.heigvd.sym.lab3_environment
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.*
-import com.heigvd.sym.lab3_environment.utils.ManageNFC
 import androidx.appcompat.app.AlertDialog
+import com.heigvd.sym.lab3_environment.utils.ManageNFC
 import com.heigvd.sym.lab3_environment.utils.NFCActivity
 import kotlinx.coroutines.*
 
 
 class NFCLogin : NFCActivity() {
-
-    private var mTextView: TextView? = null
 
     private lateinit var user: EditText
     private lateinit var password: EditText
@@ -24,23 +29,18 @@ class NFCLogin : NFCActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nfc)
-        Log.d(TAG, "onCreate")
 
         user = findViewById(R.id.pw_user)
         password = findViewById(R.id.pw_pw)
         validateButton = findViewById(R.id.btn_connect)
 
         nfcPostExecute = object : ManageNFC() {
-            @Override
-            override fun onPostExecute(result: String){
+            override fun onPostExecute(result: String) {
                 super.onPostExecute(result) // basic check is performed in there
 
-                Log.e("setText : ", "read")
-                Log.e("setText pc : ", passwordCheck.toString())
-                Log.e("setText : ", result)
 
-                if(passwordCheck){
-                    Log.e("setText : ", "startActivity")
+                if (passwordCheck) {
+                    // User is now connected. We can launch the next activity
                     val intent = Intent(activity.applicationContext, NFCConnected::class.java)
                     startActivity(intent)
                 }
@@ -48,7 +48,7 @@ class NFCLogin : NFCActivity() {
         }
 
         validateButton.setOnClickListener {
-            //on réinitialise les messages d'erreur
+            // Reset error message
             user.error = null
             password.error = null
 
@@ -63,7 +63,7 @@ class NFCLogin : NFCActivity() {
                 return@setOnClickListener
             }
             if (credentials.find { it == Pair(userInput, passwordInput) } != null) {
-                // Lance handle
+                // Launch NFC scan
                 passwordCheck = true;
                 handleIntent(intent);
             } else {
@@ -77,7 +77,6 @@ class NFCLogin : NFCActivity() {
             }
         }
     }
-
 
     companion object {
         val credentials: MutableList<Pair<String, String>> = mutableListOf(
