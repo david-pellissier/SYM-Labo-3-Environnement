@@ -15,7 +15,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.*
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ListView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -67,13 +71,15 @@ class iBeacon : AppCompatActivity() {
         checkLocationPermission()
         // TODO: Add beaconParsers for any properietry beacon formats you wish to detect
         val recyclerView : ListView = findViewById(R.id.recyclerView)
+        adapter = BeaconAdapter(beaconList, applicationContext)
+        recyclerView.adapter = adapter
 
-        with(recyclerView) {
+        /*with(recyclerView) {
             //layoutManager = LinearLayoutManager(this@iBeacon)
             adapter = BeaconAdapter(beaconList, context)
-        }
-
-        beaconList.add(BeaconUtils("test", "test1", "test3", "test4"))
+        }*/
+        adapter?.addBeacon(BeaconUtils("test", "test1", "test3", "test4"))
+        //beaconList.add(BeaconUtils("test", "test1", "test3", "test4"))
 
         val beaconManager =  BeaconManager.getInstanceForApplication(this)
         val region = Region("all-beacons-region", null, null, null)
@@ -84,10 +90,13 @@ class iBeacon : AppCompatActivity() {
         Log.d(TAG, "WHAAAT")
     }
 
-    val rangingObserver = Observer<Collection<Beacon>> { beacons ->
+
+
+    private val rangingObserver = Observer<Collection<Beacon>> { beacons ->
         Log.d(TAG, "Ranged: ${beacons.count()} beacons")
 
         for (beacon: Beacon in beacons) {
+            Log.d(TAG, "add beacon")
             beaconList.add(BeaconUtils(
                 beacon.id1.toString(),beacon.id2.toString(), beacon.id3.toString(), beacon.rssi.toString()))
             adapter?.addBeacon(BeaconUtils(
@@ -209,6 +218,7 @@ class iBeacon : AppCompatActivity() {
         permissions: Array<String>,
         grantResults: IntArray
     ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             MY_PERMISSIONS_REQUEST_LOCATION -> {
                 // If request is cancelled, the result arrays are empty.
