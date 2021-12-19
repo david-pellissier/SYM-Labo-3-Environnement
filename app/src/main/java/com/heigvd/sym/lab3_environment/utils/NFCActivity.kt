@@ -32,27 +32,14 @@ abstract class NFCActivity() : AppCompatActivity() {
         /*
         Intent to start an activity when a tag with NDEF payload is discovered.
          */
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED == action) { // TODO: check if necessary (included in second)
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED == action) {
             val type = intent.type
             if (MIME_TEXT_PLAIN == type) {
+                //Intent to start an activity when a tag is discovered.
                 val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
                 nfcPostExecute?.execute(tag)
             } else {
                 Log.e(TAG, "Wrong MIME type: $type")
-            }
-            //Intent to start an activity when a tag is discovered.
-            //Not necessary for the lab but makes it easier to extend the application to other tags
-        } else if (NfcAdapter.ACTION_TECH_DISCOVERED == action) {
-            // In case we would still use the Tech Discovered Intent
-            Toast.makeText(this, "Taction-tech-discovers", Toast.LENGTH_LONG).show()
-            val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
-            val techList: Array<String> = tag?.techList as Array<String>
-            val searchedTech = Ndef::class.java.name
-            for (tech in techList) {
-                if (searchedTech == tech) {
-                    nfcPostExecute?.execute(tag)
-                    break
-                }
             }
         } else {
             Log.d(TAG, "No tags found")
