@@ -2,6 +2,7 @@
  * Groupe : Pellissier David, Ruckstuhl Michael, Sauge Ryan
  * Description : Activité pour la partie "iBeacon" du laboratoire.
  *               L'application demande les permissions nécessaires
+ *               L'implémentation des permission est inspiré de https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime
  */
 
 package com.heigvd.sym.lab3_environment
@@ -32,7 +33,6 @@ import org.altbeacon.beacon.BeaconParser
 
 
 
-// https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime
 class iBeacon : AppCompatActivity() {
     private val beaconList : ArrayList<BeaconUtils> = ArrayList()
     private var adapter: BeaconAdapter? = null
