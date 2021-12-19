@@ -2,7 +2,8 @@
  * Groupe : Pellissier David, Ruckstuhl Michael, Sauge Ryan
  * Description : Activité pour la partie "iBeacon" du laboratoire.
  *               L'application demande les permissions nécessaires
- *               L'implémentation des permission est inspiré de https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime
+ *               L'implémentation des permission est inspiré de
+ *               https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime
  */
 
 package com.heigvd.sym.lab3_environment
@@ -12,7 +13,6 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
@@ -44,18 +44,16 @@ class iBeacon : AppCompatActivity() {
         maxWaitTime = 60
     }
 
+    /*
+    For debug and verify results
+     */
     private var locationCallback: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val locationList = locationResult.locations
             if (locationList.isNotEmpty()) {
                 //The last location in the list is the newest
                 val location = locationList.last()
-                /*Toast.makeText(
-                    this@iBeacon,
-                    "Got Location: " + location.toString(),
-                    Toast.LENGTH_LONG
-                )
-                    .show() */
+                Log.d(TAG, location.toString())
             }
         }
     }
@@ -67,7 +65,7 @@ class iBeacon : AppCompatActivity() {
         fusedLocationProvider = LocationServices.getFusedLocationProviderClient(this)
 
         checkLocationPermission()
-        // TODO: Add beaconParsers for any properietry beacon formats you wish to detect
+        //Add beaconParsers for any properietry beacon formats you wish to detect
         val recyclerView : ListView = findViewById(R.id.recyclerView)
         adapter = BeaconAdapter(beaconList, applicationContext)
         recyclerView.adapter = adapter
@@ -81,17 +79,17 @@ class iBeacon : AppCompatActivity() {
 
 
 
-    private val rangingObserver = Observer<Collection<Beacon>> { beacons ->
+    private val rangingObserver = Observer<Collection<Beacon>> {
+            beacons ->
+        adapter?.emptyList()
         Log.d(TAG, "Ranged: ${beacons.count()} beacons")
 
         for (beacon: Beacon in beacons) {
-            beaconList.add(BeaconUtils(
-                beacon.id1.toString(),beacon.id2.toString(), beacon.id3.toString(), beacon.rssi.toString()))
             adapter?.addBeacon(BeaconUtils(
                 beacon.id1.toString(),beacon.id2.toString(), beacon.id3.toString(), beacon.rssi.toString()))
             Log.d(TAG, "$beacon about ${beacon.distance} meters away")
             Log.d(TAG + "Identifier", beacon.identifiers.toString())
-            Log.d(TAG +"uiid", beacon.serviceUuid.toString())
+            Log.d(TAG + "uuid", beacon.serviceUuid.toString())
         }
     }
 

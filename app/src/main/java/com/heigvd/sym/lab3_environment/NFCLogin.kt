@@ -4,6 +4,8 @@
  *               L'utilisateur se connecte en entrant ses credentials et scannant le tag NFC en
  *               appuyant sur le bouton de connexion.
  *               Pour se connecter : user1:1234 et user2:abcd
+ *
+ * Remarques : les credentials doivent être corrects pour que la lecture du NFC soit prise en compte.
  */
 
 package com.heigvd.sym.lab3_environment
