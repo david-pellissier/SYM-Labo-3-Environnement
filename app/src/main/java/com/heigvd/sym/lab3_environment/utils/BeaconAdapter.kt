@@ -38,6 +38,10 @@ class BeaconAdapter(
         notifyDataSetChanged()
     }
 
+    fun emptyList(){
+        this.beaconUtilsList.clear()
+    }
+
     @Override
     override fun hasStableIds(): Boolean {
         return false;
@@ -55,10 +59,10 @@ class BeaconAdapter(
         val uuid: TextView? = recycleView?.findViewById(R.id.uuid)
         val beaconItem = getItem(position)
 
-        rssi?.text = beaconItem.RSSI
-        majeur?.text = beaconItem.majeur
-        mineur?.text = beaconItem.mineur
-        uuid?.text = beaconItem.uuid
+        rssi?.text = "RSSI : " +  beaconItem.RSSI
+        majeur?.text = "Majeur: " + beaconItem.majeur
+        mineur?.text = "Mineur : " +beaconItem.mineur
+        uuid?.text = "uuid : " + beaconItem.uuid
 
         return recycleViewLocal
     }

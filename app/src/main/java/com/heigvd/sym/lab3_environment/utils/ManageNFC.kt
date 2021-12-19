@@ -1,5 +1,6 @@
 /**
  * Groupe : Pellissier David, Ruckstuhl Michael, Sauge Ryan
+ * Source : https://code.tutsplus.com/tutorials/reading-nfc-tags-with-android--mobile-17278
  **/
 
 package com.heigvd.sym.lab3_environment.utils
