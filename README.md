@@ -2,7 +2,7 @@
 
 Authors : Pellissier David, Ruckstuhl Michael and Sauge Ryan
 
-This Android lab focuses on barcodes, NFC tags and iBeacons.
+This Android lab focuses on barcodes, NFC tags and iBeacons. A report, in French, is available here: [labo03-rapport.pdf](./labo03-rapport.pdf)
 
 1) Develop an application whose access is secured by the combination of a login/password and an appropriate NFC tag ;
 
